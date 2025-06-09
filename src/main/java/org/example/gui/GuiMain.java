@@ -182,9 +182,9 @@ public class GuiMain extends JFrame {
                         buttonRollDice.setEnabled(false);
                         buttonNextTurn.setEnabled(true);
                     }
-                    if(gameBoard.getUnbuyableSquares().contains(gameBoard.getUnbuyableSquares().get(player2.getPlayerNumber()))) {
+                    if(gameBoard.getUnbuyableSquares().contains(gameBoard.getAllSquares().get(player2.getCurrentPlayerPosition()))) {
                         buttonBuy.setEnabled(false);
-                        buttonPayRent.setEnabled(false);
+                        buttonNextTurn.setEnabled(true);
                     } else if (!Player.landAndMortgageRegister.containsKey(player2.getCurrentPlayerPosition())) {
                         buttonBuy.setEnabled(true);
                         buttonNextTurn.setEnabled(true);
@@ -311,7 +311,7 @@ public class GuiMain extends JFrame {
             result += " - " + gameBoard.getAllSquares().get(player2.getOwnedProperties().get(i)).getName() + "\n";
         }
 
-        panelPlayer1TextArea.setText(result);
+        panelPlayer2TextArea.setText(result);
     }
 
     public static void errorBox(String infoMessage, String titleBar) {
