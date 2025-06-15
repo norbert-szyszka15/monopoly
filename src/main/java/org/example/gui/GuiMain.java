@@ -96,12 +96,10 @@ public class GuiMain extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 Player currentPlayer = players.get(nowPlaying);
                 Player squareOwner = players.get((Player.landAndMortgageRegister.get(currentPlayer.getCurrentPlayerPosition())) == 1 ? 0 : 1);
+
+                currentPlayer.payRentTo(squareOwner, gameBoard);// transakcja owner dostaje current oddaje
                 infoConsole.setText("Zapłaciłeś czynsz graczowi " + squareOwner.getPlayerNumber());
 
-                int withdrawAmount = gameBoard.getAllSquares().get(currentPlayer.getCurrentPlayerPosition()).getRentPrice();
-                System.out.println(withdrawAmount);
-                currentPlayer.withdrawMoneyFromWallet(withdrawAmount);
-                squareOwner.depositMoneyToWallet(withdrawAmount);
 
                 buttonNextTurn.setEnabled(true);
                 buttonPayRent.setEnabled(false);

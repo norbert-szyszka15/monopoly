@@ -1,5 +1,7 @@
 package org.example.gui;
 
+import org.example.logic.Board;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +62,18 @@ public class Player extends JPanel {
             // zapisanie w księdze wieczystej numeru gracza i pozycji aktu własności, który kupił
             landAndMortgageRegister.put(position, this.getPlayerNumber());
         }
+    }
+    public void payRentTo(Player owner, Board gameBoard) {
+        // Pobieramy aktualna pozycje do pózniejszej weryfikacji rent
+        int position = this.currentPlayerPosition;
+
+        // Pobieramy kwote czynszu
+        int rentAmount = gameBoard.getAllSquares().get(position).getRentPrice();
+        System.out.println(rentAmount);
+
+        // Wykonujemy transakcje
+        this.withdrawMoneyFromWallet(rentAmount);
+        owner.depositMoneyToWallet(rentAmount);
     }
 
     public Player(int xValue, int yValue, int width, int height) {

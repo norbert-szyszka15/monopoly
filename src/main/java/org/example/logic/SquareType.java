@@ -2,7 +2,8 @@ package org.example.logic;
 
 public enum SquareType {
     PROPERTY(false),
-    UNBUYABLE(true);
+    UNBUYABLE(true),
+    SPECIAL(true);
 
     private final boolean unbuyable;
 

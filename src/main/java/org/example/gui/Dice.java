@@ -1,90 +1,82 @@
 package org.example.gui;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
+import java.awt.*;
 import java.util.Random;
-
-import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
+import javax.swing.*;
 
 public class Dice extends JPanel {
-    Random rand = new Random();
-    int faceValue = 1;
+    private final Random rand = new Random();
+    private int faceValue = 1;
+    private static final int DOT_SIZE = 8;
+    private static final int DOT_OFFSET = 12;
 
-    public Dice(int xValue, int yValue, int width, int height) {
-        setBorder(new LineBorder(Color.BLACK));
-        setBounds(xValue, yValue, width, height);
+
+    private enum DotPosition {
+        TOP_LEFT    (-1,  1),
+        TOP_RIGHT   ( 1,  1),
+        CENTER      ( 0,  0),
+        BOTTOM_LEFT (-1, -1),
+        BOTTOM_RIGHT( 1, -1),
+        MID_LEFT    (-1,  0),
+        MID_RIGHT   ( 1,  0);
+
+        final int xDir; // -1 = lewo, 0 = środek, 1 = prawo
+        final int yDir; // -1 = góra, 0 = środek, 1 = dół
+
+        DotPosition(int xDir, int yDir) {
+            this.xDir = xDir;
+            this.yDir = yDir;
+        }
     }
 
-    public void printValueOne(Graphics graphics) {
-        graphics.fillOval(getWidth()/2 - 5/2, getHeight()/2 - 5/2, 5, 5);
+    public Dice(int x, int y, int width, int height) {
+        setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        setBounds(x, y, width, height);
+        setBackground(new Color(240, 240, 240));
     }
 
-    public void printValueTwo(Graphics graphics) {
-        graphics.fillOval(getWidth()/2 - 15, getHeight()/2 + 10, 5, 5);
-        graphics.fillOval(getWidth()/2 + 10, getHeight()/2 - 15, 5, 5);
+    private void drawDot(Graphics g, DotPosition pos) {
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+        int x = getWidth()/2  + (pos.xDir * DOT_OFFSET) - DOT_SIZE/2;
+        int y = getHeight()/2 + (pos.yDir * DOT_OFFSET) - DOT_SIZE/2;
+
+        g2d.fillOval(x, y, DOT_SIZE, DOT_SIZE);
     }
 
-    public void printValueThree(Graphics graphics) {
-        graphics.fillOval(getWidth()/2 - 15, getHeight()/2 + 10, 5, 5);
-        graphics.fillOval(getWidth()/2 + 10, getHeight()/2 - 15, 5, 5);
-        graphics.fillOval(getWidth()/2 - 5/2, getHeight()/2 - 5/2, 5, 5);
+    private void drawFace(Graphics g, DotPosition... positions) {
+        g.setColor(Color.BLACK);
+        for (DotPosition pos : positions) {
+            drawDot(g, pos);
+        }
     }
 
-    public void printValueFour(Graphics graphics) {
-        graphics.fillOval(getWidth()/2 - 15, getHeight()/2 + 10, 5, 5);
-        graphics.fillOval(getWidth()/2 + 10, getHeight()/2 - 15, 5, 5);
-        graphics.fillOval(getWidth()/2 - 15, getHeight()/2 - 15, 5, 5);
-        graphics.fillOval(getWidth()/2 + 10, getHeight()/2 + 10, 5, 5);
-    }
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
-    public void printValueFive(Graphics graphics) {
-        graphics.fillOval(getWidth()/2 - 15, getHeight()/2 + 10, 5, 5);
-        graphics.fillOval(getWidth()/2 + 10, getHeight()/2 - 15, 5, 5);
-        graphics.fillOval(getWidth()/2 - 15, getHeight()/2 - 15, 5, 5);
-        graphics.fillOval(getWidth()/2 + 10, getHeight()/2 + 10, 5, 5);
-        graphics.fillOval(getWidth()/2 - 5/2, getHeight()/2 - 5/2, 5, 5);
-    }
-
-    public void printValueSix(Graphics graphics) {
-        graphics.fillOval(getWidth()/2 - 15, getHeight()/2 + 10, 5, 5);
-        graphics.fillOval(getWidth()/2 + 10, getHeight()/2 - 15, 5, 5);
-        graphics.fillOval(getWidth()/2 - 15, getHeight()/2 - 15, 5, 5);
-        graphics.fillOval(getWidth()/2 + 10, getHeight()/2 + 10, 5, 5);
-        graphics.fillOval(getWidth()/2 - 15, getHeight()/2 - 5/2, 5, 5);
-        graphics.fillOval(getWidth()/2 + 10, getHeight()/2 - 5/2, 5, 5);
-    }
-
-    public void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
-
-        if(faceValue == 1) {
-            printValueOne(graphics);
-        } else if(faceValue == 2) {
-            printValueTwo(graphics);
-        } else if(faceValue == 3) {
-            printValueThree(graphics);
-        } else if(faceValue == 4) {
-            printValueFour(graphics);
-        } else if(faceValue == 5) {
-            printValueFive(graphics);
-        } else {
-            printValueSix(graphics);
+        switch(faceValue) {
+            case 1 -> drawFace(g, DotPosition.CENTER);
+            case 2 -> drawFace(g, DotPosition.TOP_LEFT, DotPosition.BOTTOM_RIGHT);
+            case 3 -> drawFace(g, DotPosition.TOP_LEFT, DotPosition.CENTER, DotPosition.BOTTOM_RIGHT);
+            case 4 -> drawFace(g, DotPosition.TOP_LEFT, DotPosition.TOP_RIGHT,
+                    DotPosition.BOTTOM_LEFT, DotPosition.BOTTOM_RIGHT);
+            case 5 -> drawFace(g, DotPosition.TOP_LEFT, DotPosition.TOP_RIGHT, DotPosition.CENTER,
+                    DotPosition.BOTTOM_LEFT, DotPosition.BOTTOM_RIGHT);
+            case 6 -> drawFace(g, DotPosition.TOP_LEFT, DotPosition.TOP_RIGHT,
+                    DotPosition.MID_LEFT, DotPosition.MID_RIGHT,
+                    DotPosition.BOTTOM_LEFT, DotPosition.BOTTOM_RIGHT);
         }
     }
 
     public void rollDice() {
-        faceValue = rand.nextInt(6) +1;
+        faceValue = rand.nextInt(6) + 1;
         repaint();
     }
 
     public int getFaceValue() {
         return faceValue;
-    }
-
-    public Dice(int xValue, int yValue, int width, int height, String label) {
-        setBorder(new LineBorder(Color.BLACK));
-        setBounds(xValue, yValue, width, height);
     }
 }
