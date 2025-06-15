@@ -3,6 +3,7 @@ package org.example.logic;
 
 import org.example.gui.Player;
 
+import java.util.Random;
 import java.util.function.Consumer;
 
 public enum Card {
@@ -33,6 +34,12 @@ public enum Card {
     Card(String description, Consumer<Player> action) {
         this.description = description;
         this.action = action;
+    }
+    private static final Random RANDOM = new Random();
+
+    public static Card getRandomCard() {
+        Card[] cards = values();
+        return cards[RANDOM.nextInt(cards.length)];
     }
 
     public void execute(Player player) {

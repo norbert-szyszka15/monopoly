@@ -78,6 +78,12 @@ public class Board extends JPanel {
         JLabel lblMonopoly = getLblMonopoly();
         this.add(lblMonopoly);
     }
+    //metoda do oblugi pol szansa
+    public boolean isChanceSquare(int position) {
+        Square square = allSquares.get(position);
+        return square.getName().contains("SZANSA");
+    }
+
 
     private JLabel getLblMonopoly() {
         JLabel lblMonopoly = new JLabel("MONOPOLY"){
