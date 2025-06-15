@@ -21,7 +21,14 @@ public class Board extends JPanel {
     private ArrayList<Square> unbuyableSquares = new ArrayList<>();
 
 
+    private static Board instance;
+
+    public static Board getInstance() {
+        return instance;
+    }
+
     public Board(int xValue, int yValue, int width, int height) {
+        instance = this;
         setBorder(new LineBorder(Color.BLACK));
         setBounds(xValue, yValue, 1112, 1112);
         this.setLayout(null);
@@ -98,7 +105,9 @@ public class Board extends JPanel {
         return lblMonopoly;
     }
 
-    public void paintComponent(Graphics graphics) {
-        super.paintComponent(graphics);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(this.getBackground());
+        g.fillOval(0, 0, getWidth(), getHeight());
     }
 }

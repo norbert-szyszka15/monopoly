@@ -14,6 +14,8 @@ public class Player extends JPanel {
     private int playerNumber;
     JLabel labelPlayerNumber;
     static int totalPlayers; // może się przydać później, do rozpatrzenia
+    private boolean skipNextTurn = false; // flaga czy gracz skipuje kolejke
+
     static HashMap<Integer, Integer> landAndMortgageRegister = new HashMap<>();
 
     private int currentPlayerPosition = 0; // lokalizacja gracza na planszy
@@ -26,6 +28,13 @@ public class Player extends JPanel {
 
     public int getWallet() {
         return wallet;
+    }
+
+    public void setSkipNextTurn(boolean skip) {
+        this.skipNextTurn = skip;
+    }
+    public boolean shouldSkipNextTurn() {
+        return skipNextTurn;
     }
 
     public void withdrawMoneyFromWallet(int withdrawalAmount) {
@@ -97,42 +106,24 @@ public class Player extends JPanel {
         super.paintComponent(g);
     }
 
-    int[] xLocationsOfPlayer1 = {31, 131, 231, 331, 431, 531,
-            531, 531, 531, 531, 531,
-            431, 331, 231, 131, 31,
-            31, 31, 31, 31};
 
-    int[] yLocationsOfPlayer1 = {33, 33, 33, 33, 33, 33,
-            133, 233, 333, 433, 533,
-            533, 533, 533, 533, 533,
-            433, 333, 233, 133};
-
-    int[] xLocationsOfPlayer2 = {61, 191, 291, 361, 461, 561,
-            561, 561, 561, 561, 561,
-            461, 361, 261, 161, 61,
-            61, 61, 61, 61};
-
-    int[] yLocationsOfPlayer2 = {33, 33, 33, 33, 33, 33,
-            133, 233, 333, 433, 533,
-            533, 533, 533, 533, 533,
-            433, 333, 233, 133};
 
     public void move(int sumOfDiceValues) {
-        if(currentPlayerPosition + sumOfDiceValues > 19) {
+        if(currentPlayerPosition + sumOfDiceValues >= 40) {
             depositMoneyToWallet(200);
         }
-        int targetPosition = (currentPlayerPosition + sumOfDiceValues) % 20;
+        int targetPosition = (currentPlayerPosition + sumOfDiceValues) % 40;
         currentPlayerPosition = targetPosition;
 
-        if(GuiMain.nowPlaying == 0) {
-            this.setLocation(xLocationsOfPlayer1[targetPosition], yLocationsOfPlayer1[targetPosition]);
-        } else {
-            this.setLocation(xLocationsOfPlayer2[targetPosition], yLocationsOfPlayer2[targetPosition]);
-        }
+        // Pobierz współrzędne z Board
+        Square targetSquare = Board.getInstance().getSquareAtPosition(targetPosition);
+        int x = targetSquare.getX() + (playerNumber == 1 ? 15 : 45); // przesunięcie dla różnych graczy
+        int y = targetSquare.getY() + 15;
+
+        this.setLocation(x, y);
 
         if(landAndMortgageRegister.containsKey(this.getCurrentPlayerPosition())) {
             GuiMain.infoConsole.setText("This property belongs to player " + landAndMortgageRegister.get(this.getCurrentPlayerPosition()));
         }
-        //ledger.put(this.getCurrentSquareNumber(), this.getPlayerNumber());
     }
 }
