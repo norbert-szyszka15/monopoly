@@ -22,8 +22,8 @@ public class Square extends JPanel {
     private int price;
     private int rentPrice;
 
-    public void setRentPrice(int renPrice) {
-        this.rentPrice = renPrice;
+    public void setRentPrice(int rentPrice) {
+        this.rentPrice = rentPrice;
     }
 
     public int getRentPrice() {
@@ -93,26 +93,52 @@ public class Square extends JPanel {
 
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
+        int w = getWidth();
+        int h = getHeight();
+        int t = 20;
 
-        if(this.number == 1 || this.number == 3 || this.number == 4) {
-            graphics.drawRect(0, this.getHeight()-20, this.getWidth(), 20);
-            graphics.setColor(Color.BLUE);
-            graphics.fillRect(0, this.getHeight()-20, this.getWidth(), 20);
-        }
-        if(this.number == 6 || this.number == 8 || this.number == 9) {
-            graphics.drawRect(0, 0, 20, this.getHeight());
-            graphics.setColor(Color.PINK);
-            graphics.fillRect(0, 0, 20, this.getHeight());
-        }
-        if(this.number == 11 || this.number == 13 || this.number == 14) {
-            graphics.drawRect(0, 0, this.getWidth(), 20);
-            graphics.setColor(Color.ORANGE);
-            graphics.fillRect(0, 0, this.getWidth(), 20);
-        }
-        if(this.number == 16 || this.number == 17 || this.number == 19) {
-            graphics.drawRect(this.getWidth()-20, 0, 20, this.getHeight());
-            graphics.setColor(Color.GREEN);
-            graphics.fillRect(this.getWidth()-20, 0, 20, this.getHeight());
+        switch (number) {
+            // TOP SQUARES
+            case 1, 3 -> {
+                graphics.setColor(new Color(146, 84, 53));
+                graphics.fillRect(0, h - t, w, t);
+            }
+            case 6, 8, 9 -> {
+                graphics.setColor(new Color(168, 226, 248));
+                graphics.fillRect(0, h - t, w, t);
+            }
+
+            // RIGHT SQUARES
+            case 11, 13, 14 -> {
+                graphics.setColor(new Color(217, 58, 149));
+                graphics.fillRect(0, 0, t, h);
+            }
+            case 16, 17, 19 -> {
+                graphics.setColor(new  Color(245, 149, 28));
+                graphics.fillRect(0, 0, t, h);
+            }
+
+            // BOTTOM SQUARES
+            case 21, 23, 24 -> {
+                graphics.setColor(new Color(235, 28, 34));
+                graphics.fillRect(0, 0, w, t);
+            }
+            case 26,27,29 -> {
+                graphics.setColor(new Color(253, 243, 0));
+                graphics.fillRect(0, 0, w, t);
+            }
+
+            // LEFT SQUARES
+            case 31, 32, 34-> {
+                graphics.setColor(new  Color(29, 180, 88));
+                graphics.fillRect(w-t, 0, t, h);
+            }
+            case 37, 39 -> {
+                graphics.setColor(new  Color(0, 115, 186));
+                graphics.fillRect(w-t, 0, t, h);
+            }
+
+            default -> {}
         }
     }
 
