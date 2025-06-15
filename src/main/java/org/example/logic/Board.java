@@ -83,6 +83,11 @@ public class Board extends JPanel {
         Square square = allSquares.get(position);
         return square.getName().contains("SZANSA");
     }
+    //metoda do oblugi pol szansa
+    public boolean isTaxSquare(int position) {
+        Square square = allSquares.get(position);
+        return square.getName().contains("PODATEK");
+    }
 
 
     private JLabel getLblMonopoly() {

@@ -8,6 +8,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class Player extends JPanel {
     static int totalPlayers; // może się przydać później, do rozpatrzenia
@@ -112,6 +113,7 @@ public class Player extends JPanel {
         return drawnCard.getDescription(); // Zwróć opis do wyświetlenia
     }
 
+
     public void move(int sumOfDiceValues) {
         if (currentPlayerPosition + sumOfDiceValues >= 40) {
             depositMoneyToWallet(200);
@@ -128,6 +130,13 @@ public class Player extends JPanel {
         // Sprawdź czy pole to Szansa
         if (Board.getInstance().isChanceSquare(targetPosition)) {
             drawChanceCard();
+        }
+        // Sprawdź czy pole to podatek
+        if (Board.getInstance().isTaxSquare(targetPosition)) {
+            Random rand = new Random();
+            int taxAmount = rand.nextInt(701) + 100;  // 700 możliwych wartości (800-100) + 100
+            this.withdrawMoneyFromWallet(taxAmount);
+            System.out.println("Gracz " + playerNumber + " płaci podatek: " + taxAmount + " zł");
         }
 
         if (landAndMortgageRegister.containsKey(this.getCurrentPlayerPosition())) {
