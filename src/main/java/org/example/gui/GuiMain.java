@@ -1,32 +1,22 @@
 package org.example.gui;
 
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import java.util.ArrayList;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-
 import org.example.logic.Board;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 public class GuiMain extends JFrame {
-    private JPanel contentIncluder;
     static JTextArea infoConsole;
+    static int turnCounter = 0;
+    static int nowPlaying = 0;
     JPanel playerAssetsPanel;
     CardLayout c1 = new CardLayout();
     ArrayList<Player> players = new ArrayList<Player>();
-    static int turnCounter = 0;
     JButton buttonNextTurn;
     JButton buttonRollDice;
     JButton buttonPayRent;
@@ -38,7 +28,7 @@ public class GuiMain extends JFrame {
     Player player2;
     Boolean doubleDiceforPlayer1 = false;
     Boolean doubleDiceforPlayer2 = false;
-    static int nowPlaying = 0;
+    private JPanel contentIncluder;
 
     public GuiMain() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -125,33 +115,35 @@ public class GuiMain extends JFrame {
         buttonRollDice = new JButton("ROLL DICE");
         buttonRollDice.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(nowPlaying == 0) {
+                if (nowPlaying == 0) {
                     // RUNDA GRACZA NR 1
                     int dice1OldValue = dice1.getFaceValue();
                     int dice2OldValue = dice2.getFaceValue();
                     dice1.rollDice();
                     dice2.rollDice();
                     int dicesTotal = dice1.getFaceValue() + dice2.getFaceValue();
-                    if(dice1.getFaceValue() == dice2.getFaceValue()) {
+                    if (dice1.getFaceValue() == dice2.getFaceValue()) {
                         doubleDiceforPlayer1 = true;
                     } else {
                         doubleDiceforPlayer1 = false;
                     }
+
                     player1.move(dicesTotal);
-                    if(Player.landAndMortgageRegister.containsKey(player1.getCurrentPlayerPosition())
+
+                    if (Player.landAndMortgageRegister.containsKey(player1.getCurrentPlayerPosition())
                             && Player.landAndMortgageRegister.get(player1.getCurrentPlayerPosition()) != player1.getPlayerNumber()) {
                         buttonBuy.setEnabled(false);
                         buttonRollDice.setEnabled(false);
                         buttonNextTurn.setEnabled(false);
                         buttonPayRent.setEnabled(true);
                     }
-                    if(Player.landAndMortgageRegister.containsKey(player1.getCurrentPlayerPosition())
+                    if (Player.landAndMortgageRegister.containsKey(player1.getCurrentPlayerPosition())
                             && Player.landAndMortgageRegister.get(player1.getCurrentPlayerPosition()) == player1.getPlayerNumber()) {
                         buttonBuy.setEnabled(false);
                         buttonRollDice.setEnabled(false);
                         buttonNextTurn.setEnabled(true);
                     }
-                    if(gameBoard.getUnbuyableSquares().contains(gameBoard.getAllSquares().get(player1.getCurrentPlayerPosition()))) {
+                    if (gameBoard.getUnbuyableSquares().contains(gameBoard.getAllSquares().get(player1.getCurrentPlayerPosition()))) {
                         buttonBuy.setEnabled(false);
                         buttonNextTurn.setEnabled(true);
                     } else if (!Player.landAndMortgageRegister.containsKey(player1.getCurrentPlayerPosition())) {
@@ -166,26 +158,30 @@ public class GuiMain extends JFrame {
                     dice1.rollDice();
                     dice2.rollDice();
                     int dicesTotal = dice1.getFaceValue() + dice2.getFaceValue();
-                    if(dice1.getFaceValue() == dice2.getFaceValue()) {
+                    if (dice1.getFaceValue() == dice2.getFaceValue()) {
                         doubleDiceforPlayer2 = true;
                     } else {
                         doubleDiceforPlayer2 = false;
                     }
+
+
                     player2.move(dicesTotal);
-                    if(Player.landAndMortgageRegister.containsKey(player2.getCurrentPlayerPosition())
+
+
+                    if (Player.landAndMortgageRegister.containsKey(player2.getCurrentPlayerPosition())
                             && Player.landAndMortgageRegister.get(player2.getCurrentPlayerPosition()) != player2.getPlayerNumber()) {
                         buttonBuy.setEnabled(false);
                         buttonRollDice.setEnabled(false);
                         buttonNextTurn.setEnabled(false);
                         buttonPayRent.setEnabled(true);
                     }
-                    if(Player.landAndMortgageRegister.containsKey(player2.getCurrentPlayerPosition())
+                    if (Player.landAndMortgageRegister.containsKey(player2.getCurrentPlayerPosition())
                             && Player.landAndMortgageRegister.get(player2.getCurrentPlayerPosition()) == player2.getPlayerNumber()) {
                         buttonBuy.setEnabled(false);
                         buttonRollDice.setEnabled(false);
                         buttonNextTurn.setEnabled(true);
                     }
-                    if(gameBoard.getUnbuyableSquares().contains(gameBoard.getAllSquares().get(player2.getCurrentPlayerPosition()))) {
+                    if (gameBoard.getUnbuyableSquares().contains(gameBoard.getAllSquares().get(player2.getCurrentPlayerPosition()))) {
                         buttonBuy.setEnabled(false);
                         buttonNextTurn.setEnabled(true);
                     } else if (!Player.landAndMortgageRegister.containsKey(player2.getCurrentPlayerPosition())) {
@@ -196,7 +192,7 @@ public class GuiMain extends JFrame {
                 }
 
                 buttonRollDice.setEnabled(false);
-                if(doubleDiceforPlayer1 || doubleDiceforPlayer2) {
+                if (doubleDiceforPlayer1 || doubleDiceforPlayer2) {
                     infoConsole.setText("Kliknij przycisk by gracz " + (nowPlaying == 0 ? 1 : 2) + "mógł rzucić kośćmi!");
                 } else {
                     infoConsole.setText("Kliknij przycisk by gracz " + (nowPlaying == 0 ? 2 : 1) + "mógł rzucić kośćmi!");
@@ -220,13 +216,13 @@ public class GuiMain extends JFrame {
                 buttonPayRent.setEnabled(false);
                 buttonNextTurn.setEnabled(false);
 
-                if(nowPlaying == 0 && doubleDiceforPlayer1) {
+                if (nowPlaying == 0 && doubleDiceforPlayer1) {
                     nowPlaying = 0;
                     doubleDiceforPlayer1 = false;
-                } else if(nowPlaying == 1 && doubleDiceforPlayer2) {
+                } else if (nowPlaying == 1 && doubleDiceforPlayer2) {
                     nowPlaying = 1;
                     doubleDiceforPlayer2 = false;
-                } else if(!doubleDiceforPlayer1 && !doubleDiceforPlayer2) {
+                } else if (!doubleDiceforPlayer1 && !doubleDiceforPlayer2) {
                     nowPlaying = (nowPlaying + 1) % 2;
                 }
 
@@ -269,7 +265,7 @@ public class GuiMain extends JFrame {
         panelPlayer2.setBackground(Color.BLUE);
         playerAssetsPanel.add(panelPlayer2, "2");
         panelPlayer2.setLayout(null);
-        c1.show(playerAssetsPanel, ""+nowPlaying);
+        c1.show(playerAssetsPanel, "" + nowPlaying);
 
         JLabel panelPlayer2Title = new JLabel("Player 2 All Wealth");
         panelPlayer2Title.setForeground(Color.WHITE);
@@ -294,12 +290,22 @@ public class GuiMain extends JFrame {
 
     }
 
+    public static void errorBox(String infoMessage, String titleBar) {
+        JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.ERROR_MESSAGE);
+    }
+
+    public static void main(String[] args) {
+        GuiMain gui = new GuiMain();
+        gui.setVisible(true);
+    }
+
+
     public void updatePanelPlayer1TextArea() {
         String result = "";
-        result += "Środki w portfelu: " +  player1.getWallet() + "\n";
+        result += "Środki w portfelu: " + player1.getWallet() + "\n";
 
         result += "Akty własności: \n";
-        for(int i = 0; i < player1.getOwnedProperties().size(); i++) {
+        for (int i = 0; i < player1.getOwnedProperties().size(); i++) {
             result += " - " + gameBoard.getAllSquares().get(player1.getOwnedProperties().get(i)).getName() + "\n";
         }
 
@@ -308,23 +314,13 @@ public class GuiMain extends JFrame {
 
     public void updatePanelPlayer2TextArea() {
         String result = "";
-        result += "Środki w portfelu: " +  player2.getWallet() + "\n";
+        result += "Środki w portfelu: " + player2.getWallet() + "\n";
 
         result += "Akty własności: \n";
-        for(int i = 0; i < player2.getOwnedProperties().size(); i++) {
+        for (int i = 0; i < player2.getOwnedProperties().size(); i++) {
             result += " - " + gameBoard.getAllSquares().get(player2.getOwnedProperties().get(i)).getName() + "\n";
         }
 
         panelPlayer2TextArea.setText(result);
-    }
-
-    public static void errorBox(String infoMessage, String titleBar) {
-        JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.ERROR_MESSAGE);
-    }
-
-
-    public static void main(String[] args) {
-        GuiMain gui = new GuiMain();
-        gui.setVisible(true);
     }
 }
