@@ -23,7 +23,7 @@ public class Board extends JPanel {
 
     public Board(int xValue, int yValue, int width, int height) {
         setBorder(new LineBorder(Color.BLACK));
-        setBounds(xValue, yValue, 612, 612);
+        setBounds(xValue, yValue, 1112, 1112);
         this.setLayout(null);
         initializeSquares();
     }
@@ -42,8 +42,14 @@ public class Board extends JPanel {
 
     public void initializeSquares() {
         SquareInfo[] squaresOrder = SquareInfo.getBoardOrder();
-        int[] xCoords = {6, 106, 206, 306, 406, 506, 506, 506, 506, 506, 506, 406, 306, 206, 106, 6, 6, 6, 6, 6};
-        int[] yCoords = {6, 6, 6, 6, 6, 6, 106, 206, 306, 406, 506, 506, 506, 506, 506, 506, 406, 306, 206, 106};
+        int[] xCoords = {6, 106, 206, 306, 406, 506, 606, 706, 806, 906,
+                         1006, 1006, 1006, 1006, 1006, 1006, 1006, 1006, 1006, 1006,
+                         1006, 906, 806, 706, 606, 506, 406, 306, 206, 106,
+                         6, 6, 6, 6, 6, 6, 6, 6, 6, 6};
+        int[] yCoords = {6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+                         6, 106, 206, 306, 406, 506, 606, 706, 806, 906,
+                         1006, 1006, 1006, 1006, 1006, 1006, 1006, 1006, 1006, 1006,
+                         1006, 906, 806, 706, 606, 506, 406, 306, 206, 106};
         for (int i = 0; i < squaresOrder.length; i++) {
             SquareInfo squareInfo = squaresOrder[i];
             Square square = new Square(
@@ -77,7 +83,7 @@ public class Board extends JPanel {
                 Shape oldshape = g2.getClip();
                 double x = getWidth()/2.0;
                 double y = getHeight()/2.0;
-                aT.rotate(Math.toRadians(-35), x, y);
+                aT.rotate(Math.toRadians(-45), x, y);
                 g2.setTransform(aT);
                 g2.setClip(oldshape);
                 super.paintComponent(g);
@@ -87,12 +93,10 @@ public class Board extends JPanel {
         lblMonopoly.setBackground(Color.RED);
         lblMonopoly.setOpaque(true);
         lblMonopoly.setHorizontalAlignment(SwingConstants.CENTER);
-        lblMonopoly.setFont(new Font("Lucida Grande", Font.PLAIN, 40));
-        lblMonopoly.setBounds(179, 277, 263, 55);
+        lblMonopoly.setFont(new Font("Lucida Grande", Font.PLAIN, 120));
+        lblMonopoly.setBounds(160, 460, 800, 140);
         return lblMonopoly;
     }
-
-
 
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);

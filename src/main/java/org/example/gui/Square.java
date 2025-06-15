@@ -15,7 +15,7 @@ import javax.swing.border.LineBorder;
 
 public class Square extends JPanel {
     int number;
-    private String name;
+    private final String name;
     String description;
     JLabel nameLabel;
     static int totalSquares = 0;

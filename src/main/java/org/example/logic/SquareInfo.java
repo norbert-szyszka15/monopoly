@@ -1,26 +1,53 @@
 package org.example.logic;
 
 public enum SquareInfo {
-    BASZTOWA("Basztowa", 135, SquareType.UNBUYABLE, 0, 0),
-    ALEJA_MICKIEWICZA("Aleja Mickiewicza", 180, SquareType.PROPERTY, 100, 6),
-    KARMELICKA("Karmelicka", 180, SquareType.UNBUYABLE, 0, 0),
-    BRATYSLAWSKA("Bratysławska", 180, SquareType.PROPERTY, 100, 6),
-    WARSZAWSKA("Warszawska", 180, SquareType.PROPERTY, 120, 8),
-    KRUPNICZA("Krupnicza", -135, SquareType.UNBUYABLE, 0, 0),
-    OLSZEWSKIEGO("Olszewskiego", -90, SquareType.PROPERTY, 140, 10),
-    BRACKA("Bracka", -90, SquareType.UNBUYABLE, 0, 0),
-    CZARNOWIEJSKA("Czarnowiejska", -90, SquareType.PROPERTY, 140, 10),
-    LEA("Lea", -90, SquareType.PROPERTY, 160, 12),
-    PRADNICKA("Prądnicka", -45, SquareType.UNBUYABLE, 0, 0),
+    // TOP ROW
+    START("START", -45, SquareType.UNBUYABLE, 0, 0),
+    ALEJA_MICKIEWICZA("Aleja Mickiewicza", 0, SquareType.PROPERTY, 100, 6),
+    KASA1("KASA 1", 0, SquareType.UNBUYABLE, 0, 0),
+    BRATYSLAWSKA("Bratysławska", 0, SquareType.PROPERTY, 100, 6),
+    PODATEK1("PODATEK 1", 0, SquareType.UNBUYABLE, 120, 8),
+    test1("DWORZEC 1", 0, SquareType.PROPERTY, 100, 6),
+    test2("test2", 0, SquareType.PROPERTY, 100, 6),
+    SZANSA1("SZANSA 1", 0, SquareType.UNBUYABLE, 100, 6),
+    test4("test4", 0, SquareType.PROPERTY, 100, 6),
+    test5("test5", 0, SquareType.PROPERTY, 100, 6),
+
+    // RIGHT COLUMN
+    MIASTECZKO_STUDENCKIE("MIASTECZKO STUDENCKIE", 45, SquareType.UNBUYABLE, 0, 0),
+    OLSZEWSKIEGO("Olszewskiego", -0, SquareType.PROPERTY, 140, 10),
+    COMPANY1("COMPANY 1", -0, SquareType.PROPERTY, 0, 0),
+    CZARNOWIEJSKA("Czarnowiejska", -0, SquareType.PROPERTY, 140, 10),
+    LEA("Lea", -0, SquareType.PROPERTY, 160, 12),
+    DWORZEC2("DWORZEC 2", 0, SquareType.PROPERTY, 100, 6),
+    test7("test7", 0, SquareType.PROPERTY, 100, 6),
+    KASA2("KASA 2", 0, SquareType.UNBUYABLE, 100, 6),
+    test9("test9", 0, SquareType.PROPERTY, 100, 6),
+    test10("test10", 0, SquareType.PROPERTY, 100, 6),
+
+    // BOTTOM ROW
+    AKADEMIK("AKADEMIK", -45, SquareType.UNBUYABLE, 0, 0),
     FLORIANSKA("Floriańska", 0, SquareType.PROPERTY, 180, 14),
-    RYNEK_GLOWNY("Rynek Główny", 0, SquareType.UNBUYABLE, 0, 0),
+    SZANSA2("SZANSA 2", 0, SquareType.UNBUYABLE, 0, 0),
     PLAC_BISKUPI("Plac Biskupi", 0, SquareType.PROPERTY, 180, 14),
     PARK_KRAKOWSKI("Park Krakowski", 0, SquareType.PROPERTY, 200, 16),
-    MUZEUM_LOTNICTWA("Muzeum Lotnictwa Polskiego", 45, SquareType.UNBUYABLE, 0, 0),
-    MIODOWA("Miodowa", 90, SquareType.PROPERTY, 300, 26),
-    GRODZKA("Grodzka", 90, SquareType.PROPERTY, 300, 26),
-    DLUGA("Długa", 90, SquareType.UNBUYABLE, 0, 0),
-    PAVIA("Pawia", 90, SquareType.PROPERTY, 320, 28);
+    DWORZEC3("DWORZEC 3", 0, SquareType.PROPERTY, 100, 6),
+    test12("test12", 0, SquareType.PROPERTY, 100, 6),
+    test13("test13", 0, SquareType.PROPERTY, 100, 6),
+    COMPANY2("COMPANY 2", 0, SquareType.PROPERTY, 100, 6),
+    test15("test15", 0, SquareType.PROPERTY, 100, 6),
+
+    // LEFT COLUMN
+    IDZ_NA_MIASTECZKO("IDZIESZ NA MIASTECZKO STUDENCKIE", 45, SquareType.UNBUYABLE, 0, 0),
+    MIODOWA("Miodowa", 0, SquareType.PROPERTY, 300, 26),
+    DUPA("SZANSA 2", 0, SquareType.PROPERTY, 300, 26),
+    KASA3("KASA 3", 0, SquareType.UNBUYABLE, 0, 0),
+    PAVIA("Pawia", 0, SquareType.PROPERTY, 320, 28),
+    DWORZEC4("DWORZEC 4", 0, SquareType.PROPERTY, 100, 6),
+    SZANSA3("SZANSA 3", 0, SquareType.UNBUYABLE, 100, 6),
+    test18("test18", 0, SquareType.PROPERTY, 100, 6),
+    PODATEK2("PODATEK 2", 0, SquareType.UNBUYABLE, 100, 6),
+    test20("test20", 0, SquareType.PROPERTY, 100, 6);
 
     private final String displayName;
     private final int rotation;
@@ -58,10 +85,10 @@ public enum SquareInfo {
 
     public static SquareInfo[] getBoardOrder() {
         return new SquareInfo[]{
-                BASZTOWA, ALEJA_MICKIEWICZA, KARMELICKA, BRATYSLAWSKA, WARSZAWSKA,
-                KRUPNICZA, OLSZEWSKIEGO, BRACKA, CZARNOWIEJSKA, LEA,
-                PRADNICKA, FLORIANSKA, RYNEK_GLOWNY, PLAC_BISKUPI, PARK_KRAKOWSKI,
-                MUZEUM_LOTNICTWA, MIODOWA, GRODZKA, DLUGA, PAVIA
+                START, ALEJA_MICKIEWICZA, KASA1, BRATYSLAWSKA, PODATEK1, test1, test2, SZANSA1, test4, test5,
+                MIASTECZKO_STUDENCKIE, OLSZEWSKIEGO, COMPANY1, CZARNOWIEJSKA, LEA, DWORZEC2, test7, KASA2, test9, test10,
+                AKADEMIK, FLORIANSKA, SZANSA2, PLAC_BISKUPI, PARK_KRAKOWSKI, DWORZEC3, test12, test13, COMPANY2, test15,
+                IDZ_NA_MIASTECZKO, MIODOWA, DUPA, KASA3, PAVIA, DWORZEC4, SZANSA3, test18, PODATEK2, test20
         };
     }
 }

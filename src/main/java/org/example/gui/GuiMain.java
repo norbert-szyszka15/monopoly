@@ -43,7 +43,7 @@ public class GuiMain extends JFrame {
     public GuiMain() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 450, 300);
-        setSize(1080, 720);
+        setSize(1560, 1174);
         contentIncluder = new JPanel();
         contentIncluder.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentIncluder);
@@ -51,10 +51,10 @@ public class GuiMain extends JFrame {
 
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setBorder(new LineBorder(Color.BLACK));
-        layeredPane.setBounds(6, 6, 632, 630);
+        layeredPane.setBounds(6, 6, 1124, 1124);
         contentIncluder.add(layeredPane);
 
-        gameBoard = new Board(6, 6, 612, 612);
+        gameBoard = new Board(6, 6, 1112, 1112);
         gameBoard.setBackground(new Color(51, 255, 153));
         layeredPane.add(gameBoard, Integer.valueOf(0));
 
@@ -69,7 +69,7 @@ public class GuiMain extends JFrame {
         JPanel rightPanel = new JPanel();
         rightPanel.setBackground(Color.LIGHT_GRAY);
         rightPanel.setBorder(new LineBorder(Color.BLACK));
-        rightPanel.setBounds(634, 6, 419, 600);
+        rightPanel.setBounds(1136, 6, 418, 1124);
         contentIncluder.add(rightPanel);
         rightPanel.setLayout(null);
 
@@ -84,7 +84,6 @@ public class GuiMain extends JFrame {
                 buttonBuy.setEnabled(false);
                 updatePanelPlayer1TextArea();
                 updatePanelPlayer2TextArea();
-                //turnCounter++;
             }
         });
         buttonBuy.setBounds(81, 478, 117, 29);
@@ -113,10 +112,10 @@ public class GuiMain extends JFrame {
         rightPanel.add(buttonPayRent);
         buttonPayRent.setEnabled(false);
 
-        Dice dice1 = new Dice(244, 406, 40, 40);
+        Dice dice1 = new Dice(497, 900, 60, 60);
         layeredPane.add(dice1, Integer.valueOf(1));
 
-        Dice dice2 = new Dice(333, 406, 40, 40);
+        Dice dice2 = new Dice(567, 900, 60, 60);
         layeredPane.add(dice2, Integer.valueOf(1));
 
         buttonRollDice = new JButton("ROLL DICE");
