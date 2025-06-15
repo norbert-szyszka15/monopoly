@@ -21,6 +21,8 @@ public enum Card {
 
     DRUNK_FINE("Mandat za pijaństwo! -80 zł",
             player -> player.withdrawMoneyFromWallet(80)),
+    DZIEKANAT_ZAMKNIETY("Dziekanat zamknięty... tracisz czas (i kolejkę)",
+            player -> player.setSkipNextTurn(true)),
 
     FREE_PARKING("Darmowy parking! Otrzymujesz 50 zł",
             player -> player.depositMoneyToWallet(50));

@@ -94,6 +94,12 @@ public class GuiMain extends JFrame {
         buttonPayRent.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Player currentPlayer = players.get(nowPlaying);
+
+                if (currentPlayer.shouldSkipNextTurn()) {
+                    currentPlayer.setSkipNextTurn(false);
+                    nowPlaying = (nowPlaying + 1) % 2;
+                    infoConsole.setText("Gracz " + (currentPlayer.getPlayerNumber()) + " pomija turę! Teraz gracz: " + (nowPlaying == 0 ? 1 : 2));
+                }
                 Player squareOwner = players.get((Player.landAndMortgageRegister.get(currentPlayer.getCurrentPlayerPosition())) == 1 ? 0 : 1);
 
                 currentPlayer.payRentTo(squareOwner, gameBoard);// transakcja owner dostaje current oddaje
@@ -285,6 +291,7 @@ public class GuiMain extends JFrame {
         test.add(infoConsole);
         infoConsole.setLineWrap(true);
         infoConsole.setText("PLayer 1 starts the game by clicking Roll Dice!");
+
     }
 
     public void updatePanelPlayer1TextArea() {
@@ -314,6 +321,7 @@ public class GuiMain extends JFrame {
     public static void errorBox(String infoMessage, String titleBar) {
         JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.ERROR_MESSAGE);
     }
+
 
     public static void main(String[] args) {
         GuiMain gui = new GuiMain();
