@@ -2,6 +2,7 @@ package org.example.gui;
 
 import org.example.logic.Board;
 import org.example.logic.Card;
+import org.example.gui.CardDialog;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -129,7 +130,7 @@ public class Player extends JPanel {
 
         // Sprawdź czy pole to Szansa
         if (Board.getInstance().isChanceSquare(targetPosition)) {
-            drawChanceCard();
+            new CardDialog(this, "Szansa", drawChanceCard()).setVisible(true);
         }
         // Sprawdź czy pole to podatek
         if (Board.getInstance().isTaxSquare(targetPosition)) {

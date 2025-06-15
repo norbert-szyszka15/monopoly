@@ -42,11 +42,11 @@ public enum Card {
         return cards[RANDOM.nextInt(cards.length)];
     }
 
-    public void execute(Player player) {
-        action.accept(player);
-    }
-
     public String getDescription() {
         return description;
+    }
+
+    public void execute(Player player) {
+        action.accept(player);
     }
 }

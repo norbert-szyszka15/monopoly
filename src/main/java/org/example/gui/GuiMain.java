@@ -295,8 +295,8 @@ public class GuiMain extends JFrame {
     }
 
     public static void main(String[] args) {
-        GuiMain gui = new GuiMain();
-        gui.setVisible(true);
+        GuiMain mainFrame = new GuiMain();
+        mainFrame.setVisible(true);
     }
 
 
