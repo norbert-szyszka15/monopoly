@@ -5,10 +5,6 @@ import org.example.gui.Square;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -17,8 +13,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 public class Board extends JPanel {
-    private ArrayList<Square> allSquares = new ArrayList<>();
-    private ArrayList<Square> unbuyableSquares = new ArrayList<>();
+    private final ArrayList<Square> allSquares = new ArrayList<>();
+    private final ArrayList<Square> unbuyableSquares = new ArrayList<>();
 
 
     private static Board instance;
@@ -75,34 +71,46 @@ public class Board extends JPanel {
             }
         }
 
-        JLabel lblMonopoly = getLblMonopoly();
-        this.add(lblMonopoly);
+        JLabel labelMonopoly = getLabel(
+                Color.WHITE, new Color(235, 28, 34),
+                "MONOPOLY", 120,
+                160, 200, 800, 140
+        );
+        this.add(labelMonopoly);
+
+        JLabel labelChanceCards = getLabel(
+                Color.WHITE, new Color(106, 208, 249),
+                "SZANSA", 60,
+                200, 550, 300, 180
+        );
+        this.add(labelChanceCards);
+
+        JLabel labelCommunityChestsCards = getLabel(
+                Color.WHITE, new Color(240, 113, 30),
+                "KASA", 60,
+                610, 550, 300, 180
+        );
+        this.add(labelCommunityChestsCards);
     }
 
-    private JLabel getLblMonopoly() {
-        JLabel lblMonopoly = new JLabel("MONOPOLY"){
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D)g;
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
-                AffineTransform aT = g2.getTransform();
-                Shape oldshape = g2.getClip();
-                double x = getWidth()/2.0;
-                double y = getHeight()/2.0;
-                aT.rotate(Math.toRadians(-45), x, y);
-                g2.setTransform(aT);
-                g2.setClip(oldshape);
-                super.paintComponent(g);
-            }
-        };
-        lblMonopoly.setForeground(Color.WHITE);
-        lblMonopoly.setBackground(Color.RED);
-        lblMonopoly.setOpaque(true);
-        lblMonopoly.setHorizontalAlignment(SwingConstants.CENTER);
-        lblMonopoly.setFont(new Font("Lucida Grande", Font.PLAIN, 120));
-        lblMonopoly.setBounds(160, 460, 800, 140);
-        return lblMonopoly;
+    private JLabel getLabel(
+            Color foregroundColor,
+            Color backgroundColor,
+            String labelText,
+            int textSize,
+            int xBound,
+            int yBound,
+            int width,
+            int height
+    ) {
+        JLabel label = new JLabel(labelText);
+        label.setForeground(foregroundColor);
+        label.setBackground(backgroundColor);
+        label.setOpaque(true);
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setFont(new Font("Lucida Grande", Font.PLAIN, textSize));
+        label.setBounds(xBound, yBound, width, height);
+        return label;
     }
 
     public void paintComponent(Graphics g) {
