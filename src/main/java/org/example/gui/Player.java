@@ -2,6 +2,7 @@ package org.example.gui;
 
 import org.example.logic.Board;
 import org.example.logic.Card;
+import org.example.logic.strategySpecialField.SquareAction;
 import org.example.gui.CardDialog;
 import org.example.logic.SquareInfo;
 
@@ -127,19 +128,20 @@ public class Player extends JPanel {
     }
 
 
+
+
     public void move(int sumOfDiceValues) {
         if (currentPlayerPosition + sumOfDiceValues >= 40) {
             depositMoneyToWallet(200);
         }
+
         int targetPosition = (currentPlayerPosition + sumOfDiceValues) % 40;
-        currentPlayerPosition = targetPosition;
+        setPosition(targetPosition);
 
-        // Aktualizacja pozycji
-        Square targetSquare = Board.getInstance().getSquareAtPosition(targetPosition);
-        int x = targetSquare.getX() + (playerNumber == 1 ? 15 : 45);
-        int y = targetSquare.getY() + 15;
-        this.setLocation(x, y);
-
+        // Sprawdź i wykonaj akcję dla pola
+        SquareAction action = Board.getInstance().getSquareAction(targetPosition);
+        if (action != null) {
+            action.execute(this, targetPosition);
         // Sprawdź czy pole to Szansa
         if (Board.getInstance().isChanceSquare(targetPosition)) {
             new CardDialog(this, "Szansa", drawChanceCard()).setVisible(true);
@@ -152,8 +154,18 @@ public class Player extends JPanel {
             System.out.println("Gracz " + playerNumber + " płaci podatek: " + taxAmount + " zł");
         }
 
-        if (landAndMortgageRegister.containsKey(this.getCurrentPlayerPosition())) {
-            GuiMain.infoConsole.setText("This property belongs to player " + landAndMortgageRegister.get(this.getCurrentPlayerPosition()));
+        if (landAndMortgageRegister.containsKey(currentPlayerPosition)) {
+            GuiMain.infoConsole.setText("This property belongs to player " + landAndMortgageRegister.get(currentPlayerPosition));
         }
+    }
+
+    public void setPosition(int position) {
+        this.currentPlayerPosition = position;
+
+        // Aktualizacja pozycji graficznej
+        Square targetSquare = Board.getInstance().getSquareAtPosition(position);
+        int x = targetSquare.getX() + (playerNumber == 1 ? 15 : 45);
+        int y = targetSquare.getY() + 15;
+        this.setLocation(x, y);
     }
 }

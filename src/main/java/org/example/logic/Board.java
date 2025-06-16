@@ -1,11 +1,17 @@
 package org.example.logic;
 
 import org.example.gui.Square;
+import org.example.logic.strategySpecialField.ChanceAction;
+import org.example.logic.strategySpecialField.GoToMiasteczkoAction;
+import org.example.logic.strategySpecialField.SquareAction;
+import org.example.logic.strategySpecialField.TaxAction;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,6 +35,7 @@ public class Board extends JPanel {
         setBounds(xValue, yValue, 1112, 1112);
         this.setLayout(null);
         initializeSquares();
+        initializeSquareActions();
     }
 
     public ArrayList<Square> getAllSquares() {
@@ -92,16 +99,8 @@ public class Board extends JPanel {
         );
         this.add(labelCommunityChestsCards);
     }
-    //metoda do oblugi pol szansa
-    public boolean isChanceSquare(int position) {
-        Square square = allSquares.get(position);
-        return square.getName().contains("SZANSA");
-    }
-    //metoda do oblugi pol szansa
-    public boolean isTaxSquare(int position) {
-        Square square = allSquares.get(position);
-        return square.getName().contains("PODATEK");
-    }
+
+
 
 
     private JLabel getLabel(
@@ -129,4 +128,40 @@ public class Board extends JPanel {
         g.setColor(this.getBackground());
         g.fillOval(0, 0, getWidth(), getHeight());
     }
+
+
+    //zmiany wzorzec strategii
+    private final Map<Integer, SquareAction> squareActions = new HashMap<>();
+
+    public void initializeSquareActions() {
+        for (int i = 0; i < allSquares.size(); i++) {
+            Square square = allSquares.get(i);
+            String name = square.getName();
+
+            if (name.contains("SZANSA")) {
+                squareActions.put(i, new ChanceAction());
+            }
+            else if (name.contains("PODATEK")) {
+                squareActions.put(i, new TaxAction());
+            }
+            else if (name.equals("IDZIESZ NA MIASTECZKO STUDENCKIE")) {
+                squareActions.put(i, new GoToMiasteczkoAction());
+            }
+        }
+    }
+
+    public SquareAction getSquareAction(int position) {
+        return squareActions.get(position);
+    }
+
+    public int getMiasteczkoPosition() {
+        for (int i = 0; i < allSquares.size(); i++) {
+            if (allSquares.get(i).getName().equals("MIASTECZKO STUDENCKIE")) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }
+
+

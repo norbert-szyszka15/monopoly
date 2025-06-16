@@ -133,6 +133,8 @@ public class GuiMain extends JFrame {
                 updatePanelPlayer2TextArea();
             }
         });
+
+
         buttonBuy.setBounds(81, 478, 117, 29);
         rightPanel.add(buttonBuy);
         buttonBuy.setEnabled(false);
@@ -142,11 +144,7 @@ public class GuiMain extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 Player currentPlayer = players.get(nowPlaying);
 
-                if (currentPlayer.shouldSkipNextTurn()) {
-                    currentPlayer.setSkipNextTurn(false);
-                    nowPlaying = (nowPlaying + 1) % 2;
-                    infoConsole.setText("Gracz " + (currentPlayer.getPlayerNumber()) + " pomija turę! Teraz gracz: " + (nowPlaying == 0 ? 1 : 2));
-                }
+
                 Player squareOwner = players.get((Player.landAndMortgageRegister.get(currentPlayer.getCurrentPlayerPosition())) == 1 ? 0 : 1);
 
                 currentPlayer.payRentTo(squareOwner, gameBoard);// transakcja owner dostaje current oddaje
@@ -169,11 +167,31 @@ public class GuiMain extends JFrame {
         Dice dice2 = new Dice(567, 900, 60, 60);
         layeredPane.add(dice2, Integer.valueOf(1));
 
+        //stara wersja
+       /* buttonRollDice = new JButton("ROLL DICE");
 
 
         buttonRollDice = new JButton("ROLL DICE");
         buttonRollDice.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                Player currentPlayer = players.get(nowPlaying);
+
+                if (currentPlayer.shouldSkipNextTurn()) {
+                    currentPlayer.setSkipNextTurn(false);
+                    nowPlaying = (nowPlaying + 1) % players.size();
+
+                    // Reset przycisków
+                    buttonRollDice.setEnabled(true);
+                    buttonNextTurn.setEnabled(false);
+                    buttonPayRent.setEnabled(false);
+                    buttonBuy.setEnabled(false);
+
+                    // Aktualizuj UI
+                    updateGameUI();
+                    infoConsole.setText("Gracz " + currentPlayer.getPlayerNumber() +
+                            " pomija turę! Teraz gracz: " + (nowPlaying + 1));
+                    return;
+                }
                 if (nowPlaying == 0) {
                     // RUNDA GRACZA NR 1
                     int dice1OldValue = dice1.getFaceValue();
@@ -263,7 +281,24 @@ public class GuiMain extends JFrame {
                 updatePanelPlayer1TextArea();
                 updatePanelPlayer2TextArea();
             }
+        });*/
+        buttonRollDice = new JButton("ROLL DICE");
+        buttonRollDice.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Player currentPlayer = players.get(nowPlaying);
+
+                if (handleSkipTurn(currentPlayer)) {
+                    return;
+                }
+
+                boolean isDouble = rollDiceAndMove(currentPlayer, dice1, dice2);
+                setDoubleDiceFlag(isDouble);
+                updateButtonsAfterMove(currentPlayer);
+                updateGameStateUI(isDouble);
+            }
         });
+
+
         buttonRollDice.setBounds(81, 413, 246, 53);
         rightPanel.add(buttonRollDice);
 
@@ -273,22 +308,26 @@ public class GuiMain extends JFrame {
                 buttonRollDice.setEnabled(true);
                 buttonNextTurn.setEnabled(false);
                 buttonPayRent.setEnabled(false);
-                buttonNextTurn.setEnabled(false);
+                buttonBuy.setEnabled(false);
 
+                // Obsługa rzutów podwójnych
                 if (nowPlaying == 0 && doubleDiceforPlayer1) {
-                    nowPlaying = 0;
                     doubleDiceforPlayer1 = false;
                 } else if (nowPlaying == 1 && doubleDiceforPlayer2) {
-                    nowPlaying = 1;
                     doubleDiceforPlayer2 = false;
-                } else if (!doubleDiceforPlayer1 && !doubleDiceforPlayer2) {
-                    nowPlaying = (nowPlaying + 1) % 2;
+                } else {
+                    nowPlaying = (nowPlaying + 1) % players.size();
+
+                    // Sprawdź czy nowy gracz ma pominąć turę
+                    Player nextPlayer = players.get(nowPlaying);
+                    if (nextPlayer.shouldSkipNextTurn()) {
+                        nextPlayer.setSkipNextTurn(false);
+                        nowPlaying = (nowPlaying + 1) % players.size();
+                    }
                 }
 
-                c1.show(playerAssetsPanel, "" + (nowPlaying == 0 ? 1 : 2));
-                updatePanelPlayer1TextArea();
-                updatePanelPlayer2TextArea();
-                infoConsole.setText("Runda gracza: " + (nowPlaying == 0 ? 1 : 2));
+                // Aktualizacja UI
+                updateGameUI();
             }
         });
 
@@ -363,6 +402,93 @@ public class GuiMain extends JFrame {
         mainFrame.setVisible(true);
     }
 
+    private boolean handleSkipTurn(Player currentPlayer) {
+        if (currentPlayer.shouldSkipNextTurn()) {
+            currentPlayer.setSkipNextTurn(false);
+            nowPlaying = (nowPlaying + 1) % players.size();
+
+            resetButtons();
+            updateGameUI();
+            infoConsole.setText("Gracz " + currentPlayer.getPlayerNumber() +
+                    " pomija turę! Teraz gracz: " + (nowPlaying + 1));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean rollDiceAndMove(Player player, Dice dice1, Dice dice2) {
+        dice1.rollDice();
+        dice2.rollDice();
+        int dicesTotal = dice1.getFaceValue() + dice2.getFaceValue();
+        boolean isDouble = (dice1.getFaceValue() == dice2.getFaceValue());
+
+        player.move(dicesTotal);
+        return isDouble;
+    }
+
+    private void setDoubleDiceFlag(boolean isDouble) {
+        if (nowPlaying == 0) {
+            doubleDiceforPlayer1 = isDouble;
+        } else {
+            doubleDiceforPlayer2 = isDouble;
+        }
+    }
+
+    private void updateButtonsAfterMove(Player player) {
+        int position = player.getCurrentPlayerPosition();
+
+        if (isPropertyOwnedByOtherPlayer(player, position)) {
+            buttonBuy.setEnabled(false);
+            buttonRollDice.setEnabled(false);
+            buttonNextTurn.setEnabled(false);
+            buttonPayRent.setEnabled(true);
+        } else if (isPropertyOwnedByCurrentPlayer(player, position)) {
+            buttonBuy.setEnabled(false);
+            buttonRollDice.setEnabled(false);
+            buttonNextTurn.setEnabled(true);
+        } else if (isUnbuyableSquare(position)) {
+            buttonBuy.setEnabled(false);
+            buttonNextTurn.setEnabled(true);
+        } else {
+            buttonBuy.setEnabled(true);
+            buttonNextTurn.setEnabled(true);
+            buttonPayRent.setEnabled(false);
+        }
+    }
+
+    private boolean isPropertyOwnedByOtherPlayer(Player player, int position) {
+        return Player.landAndMortgageRegister.containsKey(position) &&
+                Player.landAndMortgageRegister.get(position) != player.getPlayerNumber();
+    }
+
+    private boolean isPropertyOwnedByCurrentPlayer(Player player, int position) {
+        return Player.landAndMortgageRegister.containsKey(position) &&
+                Player.landAndMortgageRegister.get(position) == player.getPlayerNumber();
+    }
+
+    private boolean isUnbuyableSquare(int position) {
+        return gameBoard.getUnbuyableSquares().contains(gameBoard.getAllSquares().get(position));
+    }
+
+    private void updateGameStateUI(boolean isDouble) {
+        buttonRollDice.setEnabled(false);
+
+        if (isDouble) {
+            infoConsole.setText("Kliknij przycisk by gracz " + (nowPlaying + 1) + " mógł rzucić kośćmi ponownie!");
+        } else {
+            infoConsole.setText("Kliknij przycisk by gracz " + (nowPlaying == 0 ? 2 : 1) + " mógł rzucić kośćmi!");
+        }
+
+        gameBoard.repaint();
+        updateGameUI();
+    }
+
+    private void resetButtons() {
+        buttonRollDice.setEnabled(true);
+        buttonNextTurn.setEnabled(false);
+        buttonPayRent.setEnabled(false);
+        buttonBuy.setEnabled(false);
+    }
 
     public void updatePanelPlayer1TextArea() {
         String result = "";
@@ -386,5 +512,21 @@ public class GuiMain extends JFrame {
         }
 
         panelPlayer2TextArea.setText(result);
+    }
+
+    private void updateGameUI() {
+        // Aktualizuj panel gracza
+        c1.show(playerAssetsPanel, "" + (nowPlaying + 1));
+
+        // Aktualizuj informacje o graczach
+        updatePanelPlayer1TextArea();
+        updatePanelPlayer2TextArea();
+
+        // Aktualizuj komunikat
+        infoConsole.setText("Runda gracza: " + (nowPlaying + 1));
+
+        // Wymuś odświeżenie pozycji graczy
+        player1.setPosition(player1.getCurrentPlayerPosition());
+        player2.setPosition(player2.getCurrentPlayerPosition());
     }
 }
