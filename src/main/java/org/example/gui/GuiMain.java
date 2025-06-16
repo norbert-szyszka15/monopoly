@@ -8,6 +8,8 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 public class GuiMain extends JFrame {
@@ -32,6 +34,7 @@ public class GuiMain extends JFrame {
 
     public GuiMain() {
 
+        setTitle("Monopoly");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 450, 300);
         setSize(1560, 1174);
@@ -40,14 +43,74 @@ public class GuiMain extends JFrame {
         setContentPane(contentIncluder);
         contentIncluder.setLayout(null);
 
+
+// Panel planszy
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setBorder(new LineBorder(Color.BLACK));
-        layeredPane.setBounds(6, 6, 1124, 1124);
         contentIncluder.add(layeredPane);
 
         gameBoard = new Board(6, 6, 1112, 1112);
         gameBoard.setBackground(new Color(51, 255, 153));
         layeredPane.add(gameBoard, Integer.valueOf(0));
+
+// Panel boczny
+        JPanel rightPanel = new JPanel();
+        rightPanel.setBackground(Color.LIGHT_GRAY);
+        rightPanel.setBorder(new LineBorder(Color.BLACK));
+        rightPanel.setLayout(null); // nadal null, jeśli chcesz ręcznie dodawać elementy
+        contentIncluder.add(rightPanel);
+
+// Listener który ustawia komponenty proporcjonalnie
+        contentIncluder.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                Dimension size = contentIncluder.getSize();
+
+                int padding = 6;
+
+
+                // wysokość całego okna (czyli maksymalna wielkość planszy)
+                int boardSize = size.height - 2 * padding;
+
+                // minimalna szerokość panelu bocznego (27% szerokości okna)
+                int minRightPanelWidth = (int) (size.width * 0.27);
+
+                // maksymalna szerokość panelu to tyle, ile zostaje po planszy i odstępach
+                int availableRightPanelWidth = size.width - boardSize - 3 * padding;
+
+                // faktyczna szerokość panelu – większa z dwóch (żeby mieć minimum 27%)
+                int rightPanelWidth = Math.max(minRightPanelWidth, availableRightPanelWidth);
+
+                // gdyby się nie mieściło w oknie, trzeba dodatkowo zmniejszyć boardSize
+                if (rightPanelWidth + boardSize + 3 * padding > size.width) {
+                    boardSize = size.width - rightPanelWidth - 3 * padding;
+                }
+
+                int boardAreaSize = size.height - 2 * padding;    // maksymalny kwadrat, ograniczony wysokością
+
+                if (boardAreaSize + rightPanelWidth + 3 * padding > size.width) {
+                    // jeśli plansza się nie zmieści, zmniejszamy ją
+                    boardAreaSize = size.width - rightPanelWidth - 3 * padding;
+                }
+
+
+                layeredPane.setBounds(padding, padding, boardAreaSize, boardAreaSize);
+
+                // ustawienia samej planszy w środku layeredPane
+                gameBoard.setBounds(0, 0, boardAreaSize, boardAreaSize);
+
+                // ustawienia panelu bocznego
+                rightPanel.setBounds(
+                        padding * 2 + boardAreaSize, // x
+                        padding,                     // y
+                        rightPanelWidth,            // width
+                        boardAreaSize               // height
+                );
+
+
+            }
+        });
+
 
         player1 = new Player(1, Color.RED);
         players.add(player1);
@@ -56,13 +119,6 @@ public class GuiMain extends JFrame {
         player2 = new Player(2, Color.BLUE);
         players.add(player2);
         layeredPane.add(player2, Integer.valueOf(1));
-
-        JPanel rightPanel = new JPanel();
-        rightPanel.setBackground(Color.LIGHT_GRAY);
-        rightPanel.setBorder(new LineBorder(Color.BLACK));
-        rightPanel.setBounds(1136, 6, 418, 1124);
-        contentIncluder.add(rightPanel);
-        rightPanel.setLayout(null);
 
         buttonBuy = new JButton("BUY");
         buttonBuy.addActionListener(new ActionListener() {
@@ -113,6 +169,9 @@ public class GuiMain extends JFrame {
 
         //stara wersja
        /* buttonRollDice = new JButton("ROLL DICE");
+
+
+        buttonRollDice = new JButton("ROLL DICE");
         buttonRollDice.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Player currentPlayer = players.get(nowPlaying);
@@ -271,6 +330,9 @@ public class GuiMain extends JFrame {
                 updateGameUI();
             }
         });
+
+
+
         buttonNextTurn.setBounds(81, 519, 246, 53);
         rightPanel.add(buttonNextTurn);
         buttonNextTurn.setEnabled(false);
@@ -327,15 +389,17 @@ public class GuiMain extends JFrame {
         infoConsole.setLineWrap(true);
         infoConsole.setText("PLayer 1 starts the game by clicking Roll Dice!");
 
+
     }
+
 
     public static void errorBox(String infoMessage, String titleBar) {
         JOptionPane.showMessageDialog(null, infoMessage, titleBar, JOptionPane.ERROR_MESSAGE);
     }
 
     public static void main(String[] args) {
-        GuiMain gui = new GuiMain();
-        gui.setVisible(true);
+        GuiMain mainFrame = new GuiMain();
+        mainFrame.setVisible(true);
     }
 
     private boolean handleSkipTurn(Player currentPlayer) {
