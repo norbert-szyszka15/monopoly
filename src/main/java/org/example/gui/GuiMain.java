@@ -23,6 +23,7 @@ public class GuiMain extends JFrame {
     JButton buttonRollDice;
     JButton buttonPayRent;
     JButton buttonBuy;
+    JButton buttonBuildHouse;
     JTextArea panelPlayer1TextArea;
     JTextArea panelPlayer2TextArea;
     Board gameBoard;
@@ -147,7 +148,7 @@ public class GuiMain extends JFrame {
 
                 Player squareOwner = players.get((Player.landAndMortgageRegister.get(currentPlayer.getCurrentPlayerPosition())) == 1 ? 0 : 1);
 
-                currentPlayer.payRentTo(squareOwner, gameBoard);// transakcja owner dostaje current oddaje
+                currentPlayer.payRentTo(squareOwner);// transakcja owner dostaje current oddaje
                 infoConsole.setText("Zapłaciłeś czynsz graczowi " + squareOwner.getPlayerNumber());
 
 

@@ -1,7 +1,7 @@
 package org.example.logic;
 
 import org.example.gui.Square;
-import org.example.logic.strategySpecialField.ChanceAction;
+import org.example.logic.strategySpecialField.CardAction;
 import org.example.logic.strategySpecialField.GoToMiasteczkoAction;
 import org.example.logic.strategySpecialField.SquareAction;
 import org.example.logic.strategySpecialField.TaxAction;
@@ -139,7 +139,7 @@ public class Board extends JPanel {
             String name = square.getName();
 
             if (name.contains("SZANSA")) {
-                squareActions.put(i, new ChanceAction());
+                squareActions.put(i, new CardAction());
             }
             else if (name.contains("PODATEK")) {
                 squareActions.put(i, new TaxAction());

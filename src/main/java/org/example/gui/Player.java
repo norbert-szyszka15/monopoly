@@ -2,6 +2,7 @@ package org.example.gui;
 
 import org.example.logic.Board;
 import org.example.logic.Card;
+import org.example.logic.SquareInfo;
 import org.example.logic.strategySpecialField.SquareAction;
 
 import javax.swing.*;
@@ -9,11 +10,11 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 public class Player extends JPanel {
     static int totalPlayers; // może się przydać później, do rozpatrzenia
     static HashMap<Integer, Integer> landAndMortgageRegister = new HashMap<>();
+    private HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
     JLabel labelPlayerNumber;
     private int playerNumber;
     private boolean skipNextTurn = false; // flaga czy gracz skipuje kolejke
@@ -81,21 +82,32 @@ public class Player extends JPanel {
     }
 
     public void buyProperty(int position) {
+        SquareInfo info = SquareInfo.getBoardOrder()[position];
+        String group = info.getPropertyGroup();
+
         if (landAndMortgageRegister.containsKey(position)) {
             System.out.print("Lokacja jest już zakupiona przez innego gracza!");
         } else {
             ownedProperties.add(this.getCurrentPlayerPosition());
             // zapisanie w księdze wieczystej numeru gracza i pozycji aktu własności, który kupił
             landAndMortgageRegister.put(position, this.getPlayerNumber());
+            ownedPropertiesGroupCount.merge(group, 1,  Integer::sum);
         }
     }
 
-    public void payRentTo(Player owner, Board gameBoard) {
+    public int calculateRent(int position) {
+        SquareInfo info = SquareInfo.getBoardOrder()[position];
+        int baseRent = info.getRent();
+        int count = ownedPropertiesGroupCount.getOrDefault(info.getPropertyGroup(), 1);
+        return baseRent * count;
+    }
+
+    public void payRentTo(Player owner) {
         // Pobieramy aktualna pozycje do pózniejszej weryfikacji rent
         int position = this.currentPlayerPosition;
 
         // Pobieramy kwote czynszu
-        int rentAmount = gameBoard.getAllSquares().get(position).getRentPrice();
+        int rentAmount = owner.calculateRent(position);
         System.out.println(rentAmount);
 
         // Wykonujemy transakcje

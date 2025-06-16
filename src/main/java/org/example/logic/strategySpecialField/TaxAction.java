@@ -1,6 +1,7 @@
 package org.example.logic.strategySpecialField;
 
 import org.example.gui.Player;
+import org.example.gui.dialog.TaxDialog;
 
 import java.util.Random;
 
@@ -12,5 +13,6 @@ public class TaxAction implements SquareAction {
         int taxAmount = RANDOM.nextInt(701) + 100;
         player.withdrawMoneyFromWallet(taxAmount);
         System.out.println("Gracz " + player.getPlayerNumber() + " płaci podatek: " + taxAmount + " zł");
+        new TaxDialog(player, player.getPlayerNumber(), taxAmount).setVisible(true);
     }
 }
