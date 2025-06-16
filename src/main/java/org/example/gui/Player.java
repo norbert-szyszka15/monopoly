@@ -2,6 +2,7 @@ package org.example.gui;
 
 import org.example.logic.Board;
 import org.example.logic.Card;
+import org.example.logic.strategySpecialField.SquareAction;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -114,33 +115,34 @@ public class Player extends JPanel {
     }
 
 
+
+
     public void move(int sumOfDiceValues) {
         if (currentPlayerPosition + sumOfDiceValues >= 40) {
             depositMoneyToWallet(200);
         }
-        int targetPosition = (currentPlayerPosition + sumOfDiceValues) % 40;
-        currentPlayerPosition = targetPosition;
 
-        // Aktualizacja pozycji
-        Square targetSquare = Board.getInstance().getSquareAtPosition(targetPosition);
+        int targetPosition = (currentPlayerPosition + sumOfDiceValues) % 40;
+        setPosition(targetPosition);
+
+        // Sprawdź i wykonaj akcję dla pola
+        SquareAction action = Board.getInstance().getSquareAction(targetPosition);
+        if (action != null) {
+            action.execute(this, targetPosition);
+        }
+
+        if (landAndMortgageRegister.containsKey(currentPlayerPosition)) {
+            GuiMain.infoConsole.setText("This property belongs to player " + landAndMortgageRegister.get(currentPlayerPosition));
+        }
+    }
+
+    public void setPosition(int position) {
+        this.currentPlayerPosition = position;
+
+        // Aktualizacja pozycji graficznej
+        Square targetSquare = Board.getInstance().getSquareAtPosition(position);
         int x = targetSquare.getX() + (playerNumber == 1 ? 15 : 45);
         int y = targetSquare.getY() + 15;
         this.setLocation(x, y);
-
-        // Sprawdź czy pole to Szansa
-        if (Board.getInstance().isChanceSquare(targetPosition)) {
-            drawChanceCard();
-        }
-        // Sprawdź czy pole to podatek
-        if (Board.getInstance().isTaxSquare(targetPosition)) {
-            Random rand = new Random();
-            int taxAmount = rand.nextInt(701) + 100;  // 700 możliwych wartości (800-100) + 100
-            this.withdrawMoneyFromWallet(taxAmount);
-            System.out.println("Gracz " + playerNumber + " płaci podatek: " + taxAmount + " zł");
-        }
-
-        if (landAndMortgageRegister.containsKey(this.getCurrentPlayerPosition())) {
-            GuiMain.infoConsole.setText("This property belongs to player " + landAndMortgageRegister.get(this.getCurrentPlayerPosition()));
-        }
     }
 }
