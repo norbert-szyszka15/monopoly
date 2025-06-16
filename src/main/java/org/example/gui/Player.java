@@ -3,8 +3,6 @@ package org.example.gui;
 import org.example.logic.Board;
 import org.example.logic.Card;
 import org.example.logic.strategySpecialField.SquareAction;
-import org.example.gui.CardDialog;
-import org.example.logic.SquareInfo;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -21,7 +19,6 @@ public class Player extends JPanel {
     private boolean skipNextTurn = false; // flaga czy gracz skipuje kolejke
     private int currentPlayerPosition = 0; // lokalizacja gracza na planszy
     private ArrayList<Integer> ownedProperties = new ArrayList<>(); // posiadane akty własności
-    private HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
     private int wallet = 3200; // początkowa ilość gotówki gracza
 
     public Player(int xValue, int yValue, int width, int height) {
@@ -88,19 +85,9 @@ public class Player extends JPanel {
             System.out.print("Lokacja jest już zakupiona przez innego gracza!");
         } else {
             ownedProperties.add(this.getCurrentPlayerPosition());
-            SquareInfo info = SquareInfo.getBoardOrder()[position];
-            String group = info.getPropertyGroup();
             // zapisanie w księdze wieczystej numeru gracza i pozycji aktu własności, który kupił
             landAndMortgageRegister.put(position, this.getPlayerNumber());
-            ownedPropertiesGroupCount.merge(group, 1, Integer::sum);
         }
-    }
-
-    public int calculateRent(int position) {
-        SquareInfo info = SquareInfo.getBoardOrder()[position];
-        int baseRent = info.getRent();
-        int count = ownedPropertiesGroupCount.getOrDefault(info.getPropertyGroup(), 1);
-        return baseRent * count;
     }
 
     public void payRentTo(Player owner, Board gameBoard) {
@@ -108,7 +95,7 @@ public class Player extends JPanel {
         int position = this.currentPlayerPosition;
 
         // Pobieramy kwote czynszu
-        int rentAmount = owner.calculateRent(position);
+        int rentAmount = gameBoard.getAllSquares().get(position).getRentPrice();
         System.out.println(rentAmount);
 
         // Wykonujemy transakcje
@@ -142,16 +129,6 @@ public class Player extends JPanel {
         SquareAction action = Board.getInstance().getSquareAction(targetPosition);
         if (action != null) {
             action.execute(this, targetPosition);
-        // Sprawdź czy pole to Szansa
-        if (Board.getInstance().isChanceSquare(targetPosition)) {
-            new CardDialog(this, "Szansa", drawChanceCard()).setVisible(true);
-        }
-        // Sprawdź czy pole to podatek
-        if (Board.getInstance().isTaxSquare(targetPosition)) {
-            Random rand = new Random();
-            int taxAmount = rand.nextInt(701) + 100;  // 700 możliwych wartości (800-100) + 100
-            this.withdrawMoneyFromWallet(taxAmount);
-            System.out.println("Gracz " + playerNumber + " płaci podatek: " + taxAmount + " zł");
         }
 
         if (landAndMortgageRegister.containsKey(currentPlayerPosition)) {
