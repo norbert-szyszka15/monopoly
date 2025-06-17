@@ -102,7 +102,10 @@ public class Board extends JPanel {
             } else {
                 square.setPrice(squareInfo.getPrice());
                 square.setRentPrice(squareInfo.getRent());
+                square.refreshLabel();
             }
+            System.out.println("[" + squareInfo.getDisplayName() + "] cena: " + squareInfo.getPrice());
+
         }
     }
 
