@@ -75,7 +75,7 @@ public class GuiMain extends JFrame {
         // --- BUTTONS ---
 
         buttonBuy = new JButton("BUY");
-        buttonBuy.setBounds(81, 478, 117, 29);
+        buttonBuy.setBounds(81, 818, 117, 29);
         buttonBuy.setEnabled(false);
         buttonBuy.addActionListener(e -> {
             Player currentPlayer = players.get(nowPlaying);
@@ -91,7 +91,7 @@ public class GuiMain extends JFrame {
 
         // --- BUILD HOUSE BUTTON ---
         buttonBuildHouse = new JButton("BUILD HOUSE");
-        buttonBuildHouse.setBounds(81, 554, 246, 29);
+        buttonBuildHouse.setBounds(81, 854, 246, 29);
         buttonBuildHouse.setEnabled(false);
         buttonBuildHouse.addActionListener(e -> {
             Player currentPlayer = players.get(nowPlaying);
@@ -107,7 +107,7 @@ public class GuiMain extends JFrame {
         rightPanel.add(buttonBuildHouse);
 
         buttonPayRent = new JButton("PAY RENT");
-        buttonPayRent.setBounds(210, 478, 117, 29);
+        buttonPayRent.setBounds(210, 818, 117, 29);
         buttonPayRent.setEnabled(false);
         buttonPayRent.addActionListener(e -> {
             Player currentPlayer = players.get(nowPlaying);
@@ -124,7 +124,7 @@ public class GuiMain extends JFrame {
         rightPanel.add(buttonPayRent);
 
         buttonRollDice = new JButton("ROLL DICE");
-        buttonRollDice.setBounds(81, 413, 246, 53);
+        buttonRollDice.setBounds(81, 728, 246, 53);
         buttonRollDice.addActionListener(e -> {
             Player currentPlayer = players.get(nowPlaying);
 
@@ -186,7 +186,7 @@ public class GuiMain extends JFrame {
         rightPanel.add(buttonRollDice);
 
         buttonNextTurn = new JButton("NEXT TURN");
-        buttonNextTurn.setBounds(81, 519, 246, 53);
+        buttonNextTurn.setBounds(81, 919, 246, 53);
         buttonNextTurn.setEnabled(false);
         buttonNextTurn.addActionListener(e -> {
             buttonRollDice.setEnabled(true);
@@ -228,7 +228,7 @@ public class GuiMain extends JFrame {
         panelPlayer1.add(panelPlayer1Title);
 
         panelPlayer1TextArea = new JTextArea();
-        panelPlayer1TextArea.setBounds(10, 34, 230, 149);
+        panelPlayer1TextArea.setBounds(10, 34, 230, 549);
         panelPlayer1.add(panelPlayer1TextArea);
 
         JPanel panelPlayer2 = new JPanel();
@@ -243,12 +243,12 @@ public class GuiMain extends JFrame {
         panelPlayer2.add(panelPlayer2Title);
 
         panelPlayer2TextArea = new JTextArea();
-        panelPlayer2TextArea.setBounds(10, 34, 230, 149);
+        panelPlayer2TextArea.setBounds(10, 34, 230, 349);
         panelPlayer2.add(panelPlayer2TextArea);
 
         // Info console
         JPanel infoPanel = new JPanel();
-        infoPanel.setBounds(81, 312, 246, 68);
+        infoPanel.setBounds(81, 652, 246, 68);
         infoPanel.setLayout(null);
         rightPanel.add(infoPanel);
 
