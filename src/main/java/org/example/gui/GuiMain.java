@@ -4,7 +4,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 public class GuiMain extends JFrame {
@@ -35,7 +36,7 @@ public class GuiMain extends JFrame {
         setContentPane(contentIncluder);
         contentIncluder.setLayout(null);
 
-        boardPanel = new BoardPanel(this);
+        boardPanel = new BoardPanel();
         contentIncluder.add(boardPanel);
 
         JPanel rightPanel = new JPanel();
@@ -59,12 +60,7 @@ public class GuiMain extends JFrame {
 
                 boardPanel.setBounds(padding, padding, boardSize, boardSize);
 
-                rightPanel.setBounds(
-                        padding * 2 + boardSize,
-                        padding,
-                        rightPanelWidth,
-                        boardSize
-                );
+                rightPanel.setBounds(padding * 2 + boardSize, padding, rightPanelWidth, boardSize);
             }
         });
 
@@ -131,6 +127,7 @@ public class GuiMain extends JFrame {
         buttonRollDice.addActionListener(e -> {
             Player currentPlayer = players.get(nowPlaying);
 
+            //sprawdzenie czy gracz powinien skipnąc kolejke
             if (shouldPlayerSkipTurn(currentPlayer)) return;
 
             dice1.rollDice();
@@ -276,25 +273,25 @@ public class GuiMain extends JFrame {
             }
         });
     }
-//metoda sprawdzajaca czy gracz jest na miasteczku i czy  powinien pominąć ture.
-    private boolean shouldPlayerSkipTurn(Player currentPlayer) {
-        if (currentPlayer.shouldSkipNextTurn()) {
-            currentPlayer.setSkipNextTurn(false);
-            nowPlaying = (nowPlaying + 1) % players.size();
-            resetButtons();
-            updateGameUI();
-            infoConsole.setText("Gracz " + currentPlayer.getPlayerNumber() +
-                    " pomija turę! Teraz gracz: " + (nowPlaying + 1));
-            return true;
-        }
-        return false;
-    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             GuiMain mainFrame = new GuiMain();
             mainFrame.setVisible(true);
         });
+    }
+
+    //metoda sprawdzajaca czy gracz jest na miasteczku i czy  powinien pominąć ture.
+    private boolean shouldPlayerSkipTurn(Player currentPlayer) {
+        if (currentPlayer.shouldSkipNextTurn()) {
+            currentPlayer.setSkipNextTurn(false);
+            nowPlaying = (nowPlaying + 1) % players.size();
+            resetButtons();
+            updateGameUI();
+            infoConsole.setText("Gracz " + currentPlayer.getPlayerNumber() + " pomija turę! Teraz gracz: " + (nowPlaying + 1));
+            return true;
+        }
+        return false;
     }
 
     private void resetButtons() {
@@ -328,24 +325,5 @@ public class GuiMain extends JFrame {
             result += " - " + boardPanel.getGameBoard().getAllSquares().get(id).getName() + "\n";
         }
         panelPlayer2TextArea.setText(result);
-    }
-
-    public void endGame(int winnerPlayerNumber) {
-        // Wyłącz przyciski
-        buttonRollDice.setEnabled(false);
-        buttonNextTurn.setEnabled(false);
-        buttonBuy.setEnabled(false);
-        buttonPayRent.setEnabled(false);
-
-        // Wyświetl okno dialogowe
-        JOptionPane.showMessageDialog(
-                this,
-                "Koniec gry! Wygrywa gracz " + winnerPlayerNumber,
-                "Koniec gry",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-
-        // Zamknij aplikację
-        System.exit(0);
     }
 }
