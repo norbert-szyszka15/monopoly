@@ -36,7 +36,7 @@ public class GuiMain extends JFrame {
         setContentPane(contentIncluder);
         contentIncluder.setLayout(null);
 
-        boardPanel = new BoardPanel();
+        boardPanel = new BoardPanel(this);
         contentIncluder.add(boardPanel);
 
         JPanel rightPanel = new JPanel();
@@ -325,5 +325,24 @@ public class GuiMain extends JFrame {
             result += " - " + boardPanel.getGameBoard().getAllSquares().get(id).getName() + "\n";
         }
         panelPlayer2TextArea.setText(result);
+    }
+
+    public void endGame(int winnerPlayerNumber) {
+        // Wyłącz przyciski
+        buttonRollDice.setEnabled(false);
+        buttonNextTurn.setEnabled(false);
+        buttonBuy.setEnabled(false);
+        buttonPayRent.setEnabled(false);
+
+        // Wyświetl okno dialogowe
+        JOptionPane.showMessageDialog(
+                this,
+                "Koniec gry! Wygrywa gracz " + winnerPlayerNumber,
+                "Koniec gry",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+
+        // Zamknij aplikację
+        System.exit(0);
     }
 }
