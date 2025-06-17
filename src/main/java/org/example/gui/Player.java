@@ -18,7 +18,6 @@ public class Player extends JPanel {
     private HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
     private HashMap<Integer,Integer> housesOnProperty = new HashMap<>();
     JLabel labelPlayerNumber;
-    private HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
     private int playerNumber;
     private boolean skipNextTurn = false; // flaga czy gracz skipuje kolejke
     private int currentPlayerPosition = 0; // lokalizacja gracza na planszy
@@ -146,7 +145,7 @@ public class Player extends JPanel {
     }
 
     public HashMap<Integer,Integer> getHousesOnPropertyMap() {
-        return (HashMap<Integer, Integer>) Collections.unmodifiableMap(housesOnProperty);
+        return new HashMap<>(housesOnProperty);
     }
 
     public void payRentTo(Player owner) {
