@@ -10,19 +10,19 @@ public enum SquareInfo {
     KASA1("KASA 1", SquareType.UNBUYABLE, 0, 0, "FUNC"),
     BRATYSLAWSKA("Bratysławska", SquareType.PROPERTY, 100, 6, "BROWN"),
     PODATEK1("PODATEK 1", SquareType.UNBUYABLE, 120, 8, "FUNC"),
-    KRAKOW_GLOWNY("<html>KRAKÓW<br> GŁÓWNY</html>", SquareType.PROPERTY, 100, 6, "STATION"),
+    KRAKOW_GLOWNY("KRAKÓW\nGŁÓWNY", SquareType.PROPERTY, 100, 6, "STATION"),
     LUZYCKA("Łużycka", SquareType.PROPERTY, 100, 6, "LIGHTBLUE"),
     SZANSA1("SZANSA 1", SquareType.UNBUYABLE, 100, 6, "FUNC"),
     LAGIEWNICKA("Łagiewnicka", SquareType.PROPERTY, 100, 6, "LIGHTBLUE"),
     PODGORSKA("Podgórska", SquareType.PROPERTY, 100, 6, "LIGHTBLUE"),
 
     // RIGHT COLUMN
-    MIASTECZKO_STUDENCKIE("<html>MIASTECZKO<br> STUDENCKIE</html>", SquareType.UNBUYABLE, 0, 0, "FUNC"),
+    MIASTECZKO_STUDENCKIE("MIASTECZKO\nSTUDENCKIE", SquareType.UNBUYABLE, 0, 0, "FUNC"),
     LIPSKA("Lipska", SquareType.PROPERTY, 140, 10, "PINK"),
     COMPANY1("COMPANY 1", SquareType.PROPERTY, 0, 0, "COMPANY"),
     SASKA("Saska", SquareType.PROPERTY, 140, 10, "PINK"),
     LEA("Lea", SquareType.PROPERTY, 160, 12, "PINK"),
-    KRAKOW_PLASZOW("<html>KRAKÓW<br>PŁASZÓW</html>", SquareType.PROPERTY, 100, 6, "STATION"),
+    KRAKOW_PLASZOW("KRAKÓW\nPŁASZÓW", SquareType.PROPERTY, 100, 6, "STATION"),
     Barska("Barska", SquareType.PROPERTY, 100, 6, "ORANGE"),
     KASA2("KASA 2", SquareType.UNBUYABLE, 100, 6, "FUNC"),
     test9("test9", SquareType.PROPERTY, 100, 6, "ORANGE"),
@@ -34,23 +34,23 @@ public enum SquareInfo {
     SZANSA2("SZANSA 2", SquareType.UNBUYABLE, 0, 0, "FUNC"),
     PLAC_BISKUPI("Plac Biskupi", SquareType.PROPERTY, 180, 14, "RED"),
     PARK_KRAKOWSKI("Park Krakowski", SquareType.PROPERTY, 200, 16, "RED"),
-    KRAKOW_LOTNISKO("<html>KRAKÓW<br>LOTNISKO</html>", SquareType.PROPERTY, 100, 6, "STATION"),
+    KRAKOW_LOTNISKO("KRAKÓW\nLOTNISKO", SquareType.PROPERTY, 100, 6, "STATION"),
     test12("Podchorążych", SquareType.PROPERTY, 100, 6, "YELLOW"),
     test13("Warszawska", SquareType.PROPERTY, 100, 6, "YELLOW"),
     COMPANY2("COMPANY 2", SquareType.PROPERTY, 100, 6, "COMPANY"),
     test15("Sukiennicka", SquareType.PROPERTY, 100, 6, "YELLOW"),
 
     // LEFT COLUMN
-    IDZ_NA_MIASTECZKO("<html>IDZIESZ NA<br> MIASTECZKO<br> STUDENCKIE<html>", SquareType.UNBUYABLE, 0, 0, "FUNC"),
+    IDZ_NA_MIASTECZKO("IDZIESZ NA\nMIASTECZKO\nSTUDENCKIE", SquareType.UNBUYABLE, 0, 0, "FUNC"),
     MIODOWA("Miodowa", SquareType.PROPERTY, 300, 26, "GREEN"),
     BRONOWICKA("Bronowicka", SquareType.PROPERTY, 300, 26, "GREEN"),
     KASA3("KASA 3", SquareType.UNBUYABLE, 0, 0, "FUNC"),
     PAWIA("Pawia", SquareType.PROPERTY, 320, 28, "GREEN"),
-    KRAKOW_BRONOWICE("<html>KRAKÓW<br>BRONOWICE</html>", SquareType.PROPERTY, 100, 6, "STATION"),
+    KRAKOW_BRONOWICE("KRAKÓW\nBRONOWICE", SquareType.PROPERTY, 100, 6, "STATION"),
     SZANSA3("SZANSA 3", SquareType.UNBUYABLE, 100, 6, "FUNC"),
     test18("Grodzka", SquareType.PROPERTY, 100, 6, "DARKBLUE"),
     PODATEK2("PODATEK 2", SquareType.UNBUYABLE, 100, 6, "FUNC"),
-    test20("<html>Stare<br>Miasto</html>", SquareType.PROPERTY, 100, 6, "DARKBLUE");
+    test20("Stare\nMiasto", SquareType.PROPERTY, 100, 6, "DARKBLUE");
 
     private static final HashMap<String, List<SquareInfo>> map = new HashMap<>();
     private final String displayName;
