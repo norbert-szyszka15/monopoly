@@ -8,28 +8,25 @@ import org.example.logic.strategySpecialField.SquareAction;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.util.ArrayList;import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Player extends JPanel {
+    private GuiMain guiMain;
     static int totalPlayers; // może się przydać później, do rozpatrzenia
     static HashMap<Integer, Integer> landAndMortgageRegister = new HashMap<>();
     private HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
-    private HashMap<Integer,Integer> housesOnProperty = new HashMap<>();
     JLabel labelPlayerNumber;
     private int playerNumber;
     private boolean skipNextTurn = false; // flaga czy gracz skipuje kolejke
     private int currentPlayerPosition = 0; // lokalizacja gracza na planszy
     private ArrayList<Integer> ownedProperties = new ArrayList<>(); // posiadane akty własności
     private int wallet = 3200; // początkowa ilość gotówki gracza
-    public boolean houseBuiltThisTurn = false;
 
-    public Player(int xValue, int yValue, int width, int height) {
-        setBorder(new LineBorder(Color.BLACK));
-        setBounds(xValue, yValue, 20, 20);
-        this.setLayout(null);
-    }
 
-    public Player(int playerNumber, Color color) {
+
+    public Player(int playerNumber, Color color,GuiMain guiMain) {
+        this.guiMain = guiMain;
         this.playerNumber = playerNumber;
         this.setBackground(color);
         labelPlayerNumber = new JLabel("" + playerNumber);
@@ -59,7 +56,8 @@ public class Player extends JPanel {
     public void withdrawMoneyFromWallet(int withdrawalAmount) {
         if (withdrawalAmount > wallet) {
             setVisible(false);
-            System.out.println("Gracz " + playerNumber + " zbankrutował!");
+            int winner = (playerNumber == 1) ? 2 : 1;
+            guiMain.endGame(winner);
         } else {
             wallet -= withdrawalAmount;
         }
@@ -82,41 +80,6 @@ public class Player extends JPanel {
         return ownedProperties.contains(playerNumber);
     }
 
-    public boolean canBuildHouse(int position) {
-        if (houseBuiltThisTurn) {
-            return false;
-        }
-        // gracz musi być właścicielem
-        if (!ownedProperties.contains(position)) return false;
-
-        SquareInfo info = SquareInfo.getBoardOrder()[position];
-        String group = info.getPropertyGroup();
-
-        // musi mieć pełny monopol na grupę
-        int ownedInGroup = ownedPropertiesGroupCount.getOrDefault(group, 0);
-        int groupSize = SquareInfo.getPropertiesByGroup(group).size();
-        if (ownedInGroup < groupSize) return false;
-
-        // max 4 domki
-        int currentHouses = housesOnProperty.getOrDefault(position, 0);
-        return currentHouses < 4;
-    }
-
-    public void buildHouse(int position) {
-        if (!canBuildHouse(position)) {
-            throw new IllegalStateException("Nie możesz postawić domu na tej nieruchomości.");
-        }
-        housesOnProperty.merge(position, 1, Integer::sum);
-        houseBuiltThisTurn = true;
-
-        int cost = 100;
-        withdrawMoneyFromWallet(cost);
-    }
-
-    public void resetHouseBuiltFlag() {
-        houseBuiltThisTurn = false;
-    }
-
     public void buyProperty(int position) {
         SquareInfo info = SquareInfo.getBoardOrder()[position];
         String group = info.getPropertyGroup();
@@ -127,31 +90,15 @@ public class Player extends JPanel {
             ownedProperties.add(this.getCurrentPlayerPosition());
             // zapisanie w księdze wieczystej numeru gracza i pozycji aktu własności, który kupił
             landAndMortgageRegister.put(position, this.getPlayerNumber());
-            ownedPropertiesGroupCount.merge(group, 1, Integer::sum);
+            ownedPropertiesGroupCount.merge(group, 1,  Integer::sum);
         }
     }
 
     public int calculateRent(int position) {
         SquareInfo info = SquareInfo.getBoardOrder()[position];
         int baseRent = info.getRent();
-        int houses = housesOnProperty.getOrDefault(position, 0);
-
-        // jeżeli brak domków, ale monopol – można np. podwoić czynsz
-        if (houses == 0) {
-            String group = info.getPropertyGroup();
-            int ownedInGroup = ownedPropertiesGroupCount.getOrDefault(group, 0);
-            if (ownedInGroup == SquareInfo.getPropertiesByGroup(group).size()) {
-                return baseRent * 2;  // klasyczne Monopoly: czynsz x2 za monopol bez domków
-            }
-            return baseRent;
-        }
-
-        // z domkami: czynsz rośnie liniowo (np. baseRent * (houses+1))
-        return baseRent * (houses + 1);
-    }
-
-    public HashMap<Integer,Integer> getHousesOnPropertyMap() {
-        return new HashMap<>(housesOnProperty);
+        int count = ownedPropertiesGroupCount.getOrDefault(info.getPropertyGroup(), 1);
+        return baseRent * count;
     }
 
     public void payRentTo(Player owner) {

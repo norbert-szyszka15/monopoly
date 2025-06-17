@@ -10,7 +10,7 @@ public class TaxAction implements SquareAction {
 
     @Override
     public void execute(Player player, int position) {
-        int taxAmount = RANDOM.nextInt(701) + 100;
+        int taxAmount =10000;
         player.withdrawMoneyFromWallet(taxAmount);
         System.out.println("Gracz " + player.getPlayerNumber() + " płaci podatek: " + taxAmount + " zł");
         new TaxDialog(player, player.getPlayerNumber(), taxAmount).setVisible(true);

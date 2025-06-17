@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class BoardPanel extends JLayeredPane {
+    private final GuiMain guiMain;
     private final Board gameBoard;
     private final Dice dice1;
     private final Dice dice2;
@@ -20,7 +21,8 @@ public class BoardPanel extends JLayeredPane {
 
     private final List<RelativeComponent> relativeComponents = new ArrayList<>();
 
-    public BoardPanel() {
+    public BoardPanel(GuiMain guiMain) {
+        this.guiMain = guiMain;
         setBorder(new LineBorder(Color.BLACK));
         setLayout(null); // absolutne pozycjonowanie
 
@@ -44,8 +46,8 @@ public class BoardPanel extends JLayeredPane {
 
 
         // 2. Gracze
-        player1View = new Player(1, Color.RED);
-        player2View = new Player(2, Color.BLUE);
+        player1View = new Player(1, Color.RED, guiMain);
+        player2View = new Player(2, Color.BLUE, guiMain);
         add(player1View, Integer.valueOf(1));
         add(player2View, Integer.valueOf(1));
         addRelativeComponent(player1View, 0.01f, 0.01f, 0.03f, 0.03f); // startowy narożnik
