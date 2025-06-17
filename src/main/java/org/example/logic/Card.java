@@ -1,6 +1,5 @@
 package org.example.logic;
 
-
 import org.example.gui.Player;
 
 import java.util.Random;

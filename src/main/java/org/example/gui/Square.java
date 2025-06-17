@@ -14,7 +14,7 @@ public class Square extends JPanel {
     private int rentPrice;
     private boolean isRentPaid = false;
 
-    public Square(String labelString, int rotationDegrees) {
+    public Square(String labelString) {
         number = totalSquares++;
         name = labelString;
         setBorder(new LineBorder(Color.BLACK));
@@ -29,7 +29,7 @@ public class Square extends JPanel {
         nameLabel.setBounds(0, 5, this.getWidth(), this.getHeight()); // może być dopasowane
         this.add(nameLabel);
 
-
+      
     }
 
     public String getDisplayLabel() {
