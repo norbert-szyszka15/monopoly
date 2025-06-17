@@ -2,10 +2,7 @@ package org.example.logic;
 
 import org.example.gui.RelativeComponent;
 import org.example.gui.Square;
-import org.example.logic.strategySpecialField.CardAction;
-import org.example.logic.strategySpecialField.GoToMiasteczkoAction;
-import org.example.logic.strategySpecialField.SquareAction;
-import org.example.logic.strategySpecialField.TaxAction;
+import org.example.logic.strategySpecialField.*;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -115,10 +112,12 @@ public class Board extends JPanel {
             String name = square.getName();
 
             if (name.contains("SZANSA")) {
-                squareActions.put(i, new CardAction());
+                squareActions.put(i, new ChanceCardAction());
+            } else if (name.contains("KASA")) {
+                squareActions.put(i, new CommunityChestCardAction());
             } else if (name.contains("PODATEK")) {
                 squareActions.put(i, new TaxAction());
-            } else if (name.equals("IDZIESZ NA MIASTECZKO STUDENCKIE")) {
+            } else if (name.contains("IDZIESZ")) {
                 squareActions.put(i, new GoToMiasteczkoAction());
             }
         }
