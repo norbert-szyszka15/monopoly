@@ -14,7 +14,7 @@ public class Square extends JPanel {
     private int rentPrice;
     private boolean isRentPaid = false;
 
-    public Square(String labelString, int rotationDegrees) {
+    public Square(String labelString) {
         number = totalSquares++;
         name = labelString;
         setBorder(new LineBorder(Color.BLACK));
@@ -26,9 +26,9 @@ public class Square extends JPanel {
         nameLabel.setOpaque(false);
 
         // Obsługa rotacji tekstu
-        if (rotationDegrees != 0) {
-            nameLabel.setUI(new VerticalLabelUI(rotationDegrees));
-        }
+//        if (rotationDegrees != 0) { <- jak coś musi być w argumentach, wyrzucam bo nie używamy rotacji
+//            nameLabel.setUI(new VerticalLabelUI(rotationDegrees));
+//        }
 
         add(nameLabel);
     }

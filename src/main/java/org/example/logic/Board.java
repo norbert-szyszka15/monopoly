@@ -84,7 +84,7 @@ public class Board extends JPanel {
 
         for (int i = 0; i < squaresOrder.length; i++) {
             SquareInfo squareInfo = squaresOrder[i];
-            Square square = new Square(squareInfo.getDisplayName(), squareInfo.getRotation());
+            Square square = new Square(squareInfo.getDisplayName());
 
             this.add(square);
             allSquares.add(square);
