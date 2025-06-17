@@ -21,17 +21,25 @@ public class Square extends JPanel {
         setLayout(null);
         setOpaque(false); // by plansza pod spodem była widoczna
 
-        nameLabel = new JLabel(labelString, SwingConstants.CENTER);
-        nameLabel.setFont(new Font("SansSerif", Font.PLAIN, 9));
-        nameLabel.setOpaque(false);
+// Ustawienie etykiety
+        nameLabel = new JLabel(getDisplayLabel());
+        nameLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
+        nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        nameLabel.setVerticalAlignment(SwingConstants.CENTER); // dla wieloliniowego
+        nameLabel.setBounds(0, 5, this.getWidth(), this.getHeight()); // może być dopasowane
+        this.add(nameLabel);
 
-        // Obsługa rotacji tekstu
-//        if (rotationDegrees != 0) { <- jak coś musi być w argumentach, wyrzucam bo nie używamy rotacji
-//            nameLabel.setUI(new VerticalLabelUI(rotationDegrees));
-//        }
-
-        add(nameLabel);
+      
     }
+
+    public String getDisplayLabel() {
+        String base = name.replace("\n", "<br>");
+        if (price > 0) {
+            return "<html><div style='text-align:center'>" + name.replace("\n", "<br>") + "<br><b>" + price + " zł</b></div></html>";
+        }
+        return "<html><div style='text-align:center'>" + name.replace("\n", "<br>") + "</div></html>";
+    }
+
 
     public void setRentPaid(boolean rentPaid) {
         isRentPaid = rentPaid;
@@ -59,6 +67,9 @@ public class Square extends JPanel {
 
     public int getPrice() {
         return price;
+    }
+    public void refreshLabel() {
+        nameLabel.setText(getDisplayLabel());
     }
 
     @Override
