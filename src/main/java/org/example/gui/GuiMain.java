@@ -1,5 +1,7 @@
 package org.example.gui;
 
+import org.example.gui.dialog.EndGameDialog;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -336,12 +338,9 @@ public class GuiMain extends JFrame {
         buttonPayRent.setEnabled(false);
 
         // Wyświetl okno dialogowe
-        JOptionPane.showMessageDialog(
-                this,
-                "Koniec gry! Wygrywa gracz " + winnerPlayerNumber,
-                "Koniec gry",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+        System.out.println("Gracz " + winnerPlayerNumber + " wygrywa grę, przeciwnik zbankrutował!");
+        EndGameDialog endGameDialog = new EndGameDialog(this, winnerPlayerNumber);
+        endGameDialog.setVisible(true);
 
         // Zamknij aplikację
         System.exit(0);
