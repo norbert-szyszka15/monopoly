@@ -7,22 +7,17 @@ import org.example.logic.strategySpecialField.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Board extends JPanel {
+    private static Board instance;
     private final ArrayList<Square> allSquares = new ArrayList<>();
     private final ArrayList<Square> unbuyableSquares = new ArrayList<>();
     private final Map<Integer, SquareAction> squareActions = new HashMap<>();
     private final List<RelativeComponent> relativeComponents = new ArrayList<>();
-
-    private static Board instance;
-
-    public static Board getInstance() {
-        return instance;
-    }
 
     public Board(int xValue, int yValue, int width, int height) {
         instance = this;
@@ -39,6 +34,10 @@ public class Board extends JPanel {
                 resizeRelativeComponents();
             }
         });
+    }
+
+    public static Board getInstance() {
+        return instance;
     }
 
     public ArrayList<Square> getAllSquares() {
@@ -59,7 +58,7 @@ public class Board extends JPanel {
 
     public int getMiasteczkoPosition() {
         for (int i = 0; i < allSquares.size(); i++) {
-            if (allSquares.get(i).getName().equals("MIASTECZKO STUDENCKIE")) {
+            if (allSquares.get(i).getName().equals("<html>MIASTECZKO<br> STUDENCKIE</html>")) {
                 return i;
             }
         }

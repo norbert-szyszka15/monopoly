@@ -27,6 +27,7 @@ public enum Card {
     FREE_PARKING("Darmowy parking! Otrzymujesz 50 zł",
             player -> player.depositMoneyToWallet(50));
 
+    private static final Random RANDOM = new Random();
     private final String description;
     private final Consumer<Player> action;
 
@@ -34,7 +35,6 @@ public enum Card {
         this.description = description;
         this.action = action;
     }
-    private static final Random RANDOM = new Random();
 
     public static Card getRandomCard() {
         Card[] cards = values();

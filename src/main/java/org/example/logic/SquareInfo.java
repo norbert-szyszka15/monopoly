@@ -52,13 +52,12 @@ public enum SquareInfo {
     PODATEK2("PODATEK 2", SquareType.UNBUYABLE, 100, 6, "FUNC"),
     test20("<html>Stare<br>Miasto</html>", SquareType.PROPERTY, 100, 6, "DARKBLUE");
 
+    private static final HashMap<String, List<SquareInfo>> map = new HashMap<>();
     private final String displayName;
     private final SquareType type;
     private final int price;
     private final int rent;
     private final String propertyGroup;
-
-    private static final HashMap<String, List<SquareInfo>> map = new HashMap<>();
 
     SquareInfo(String displayName, SquareType type, int price, int rent, String propertyGroup) {
         this.displayName = displayName;
@@ -68,10 +67,18 @@ public enum SquareInfo {
         this.propertyGroup = propertyGroup;
     }
 
+    public static SquareInfo[] getBoardOrder() {
+        return new SquareInfo[]{
+                START, ALEJA_MICKIEWICZA, KASA1, BRATYSLAWSKA, PODATEK1, KRAKOW_GLOWNY, LUZYCKA, SZANSA1, LAGIEWNICKA, PODGORSKA,
+                MIASTECZKO_STUDENCKIE, LIPSKA, COMPANY1, SASKA, LEA, KRAKOW_PLASZOW, Barska, KASA2, test9, ANTYCZNA,
+                AKADEMIK, FLORIANSKA, SZANSA2, PLAC_BISKUPI, PARK_KRAKOWSKI, KRAKOW_LOTNISKO, test12, test13, COMPANY2, test15,
+                IDZ_NA_MIASTECZKO, MIODOWA, BRONOWICKA, KASA3, PAWIA, KRAKOW_BRONOWICE, SZANSA3, test18, PODATEK2, test20
+        };
+    }
+
     public String getDisplayName() {
         return displayName;
     }
-
 
     public boolean isUnbuyable() {
         return type.isUnbuyable();
@@ -81,21 +88,11 @@ public enum SquareInfo {
         return price;
     }
 
-
     public int getRent() {
         return rent;
     }
 
     public String getPropertyGroup() {
         return propertyGroup;
-    }
-
-    public static SquareInfo[] getBoardOrder() {
-        return new SquareInfo[]{
-                START, ALEJA_MICKIEWICZA, KASA1, BRATYSLAWSKA, PODATEK1, KRAKOW_GLOWNY, LUZYCKA, SZANSA1, LAGIEWNICKA, PODGORSKA,
-                MIASTECZKO_STUDENCKIE, LIPSKA, COMPANY1, SASKA, LEA, KRAKOW_PLASZOW, Barska, KASA2, test9, ANTYCZNA,
-                AKADEMIK, FLORIANSKA, SZANSA2, PLAC_BISKUPI, PARK_KRAKOWSKI, KRAKOW_LOTNISKO, test12, test13, COMPANY2, test15,
-                IDZ_NA_MIASTECZKO, MIODOWA, BRONOWICKA, KASA3, PAWIA, KRAKOW_BRONOWICE, SZANSA3, test18, PODATEK2, test20
-        };
     }
 }

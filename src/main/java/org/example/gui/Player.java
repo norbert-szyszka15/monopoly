@@ -14,8 +14,8 @@ import java.util.HashMap;
 public class Player extends JPanel {
     static int totalPlayers; // może się przydać później, do rozpatrzenia
     static HashMap<Integer, Integer> landAndMortgageRegister = new HashMap<>();
-    private HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
     JLabel labelPlayerNumber;
+    private HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
     private int playerNumber;
     private boolean skipNextTurn = false; // flaga czy gracz skipuje kolejke
     private int currentPlayerPosition = 0; // lokalizacja gracza na planszy
@@ -91,7 +91,7 @@ public class Player extends JPanel {
             ownedProperties.add(this.getCurrentPlayerPosition());
             // zapisanie w księdze wieczystej numeru gracza i pozycji aktu własności, który kupił
             landAndMortgageRegister.put(position, this.getPlayerNumber());
-            ownedPropertiesGroupCount.merge(group, 1,  Integer::sum);
+            ownedPropertiesGroupCount.merge(group, 1, Integer::sum);
         }
     }
 
