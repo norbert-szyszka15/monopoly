@@ -19,7 +19,7 @@ public class CardDialog extends JDialog {
         content.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 2));
         content.setLayout(new BorderLayout(10,10));
 
-        JLabel lbl = new JLabel(message);
+        JLabel lbl = new JLabel("<html><div style='text-align:center;'>" + message.replace("\n", "<br>") + "</div></html>");
         lbl.setForeground(Color.WHITE);
         lbl.setFont(lbl.getFont().deriveFont(Font.BOLD, 14f));
         lbl.setHorizontalAlignment(SwingConstants.CENTER);
