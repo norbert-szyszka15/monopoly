@@ -4,7 +4,7 @@ import org.example.gui.Player;
 import org.example.gui.dialog.GoToMiasteczkoDialog;
 import org.example.logic.Board;
 
-public class GoToMiasteczkoAction implements SquareAction  {
+public class GoToMiasteczkoAction implements SquareAction {
     @Override
     public void execute(Player player, int position) {
         int miasteczkoPosition = Board.getInstance().getMiasteczkoPosition();
