@@ -11,6 +11,7 @@ import java.awt.*;
 import java.util.ArrayList;import java.util.HashMap;
 
 public class Player extends JPanel {
+    private GuiMain guiMain;
     static int totalPlayers; // może się przydać później, do rozpatrzenia
     static HashMap<Integer, Integer> landAndMortgageRegister = new HashMap<>();
     private HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
@@ -23,13 +24,9 @@ public class Player extends JPanel {
     private int wallet = 3200; // początkowa ilość gotówki gracza
     public boolean houseBuiltThisTurn = false;
 
-    public Player(int xValue, int yValue, int width, int height) {
-        setBorder(new LineBorder(Color.BLACK));
-        setBounds(xValue, yValue, 20, 20);
-        this.setLayout(null);
-    }
 
-    public Player(int playerNumber, Color color) {
+    public Player(int playerNumber, Color color,GuiMain guiMain) {
+        this.guiMain = guiMain;
         this.playerNumber = playerNumber;
         this.setBackground(color);
         labelPlayerNumber = new JLabel("" + playerNumber);
@@ -59,7 +56,8 @@ public class Player extends JPanel {
     public void withdrawMoneyFromWallet(int withdrawalAmount) {
         if (withdrawalAmount > wallet) {
             setVisible(false);
-            System.out.println("Gracz " + playerNumber + " zbankrutował!");
+            int winner = (playerNumber == 1) ? 2 : 1;
+            guiMain.endGame(winner);
         } else {
             wallet -= withdrawalAmount;
         }
