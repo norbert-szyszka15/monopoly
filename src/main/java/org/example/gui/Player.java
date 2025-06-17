@@ -9,12 +9,14 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class Player extends JPanel {
     static int totalPlayers; // może się przydać później, do rozpatrzenia
     static HashMap<Integer, Integer> landAndMortgageRegister = new HashMap<>();
     private HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
+    private HashMap<Integer,Integer> housesOnProperty = new HashMap<>();
     JLabel labelPlayerNumber;
     private int playerNumber;
     private boolean skipNextTurn = false; // flaga czy gracz skipuje kolejke
@@ -81,6 +83,34 @@ public class Player extends JPanel {
         return ownedProperties.contains(playerNumber);
     }
 
+    public boolean canBuildHouse(int position) {
+        // gracz musi być właścicielem
+        if (!ownedProperties.contains(position)) return false;
+
+        SquareInfo info = SquareInfo.getBoardOrder()[position];
+        String group = info.getPropertyGroup();
+
+        // musi mieć pełny monopol na grupę
+        int ownedInGroup = ownedPropertiesGroupCount.getOrDefault(group, 0);
+        int groupSize = SquareInfo.getPropertiesByGroup(group).size();
+        if (ownedInGroup < groupSize) return false;
+
+        // max 4 domki
+        int currentHouses = housesOnProperty.getOrDefault(position, 0);
+        return currentHouses < 4;
+    }
+
+    public void buildHouse(int position) {
+        if (!canBuildHouse(position)) {
+            throw new IllegalStateException("Nie możesz postawić domu na tej nieruchomości.");
+        }
+        housesOnProperty.merge(position, 1, Integer::sum);
+
+        // opcjonalnie: ściągnij koszty budowy
+        // int cost = SquareInfo.getBoardOrder()[position].getHouseCost();
+        // withdrawMoneyFromWallet(cost);
+    }
+
     public void buyProperty(int position) {
         SquareInfo info = SquareInfo.getBoardOrder()[position];
         String group = info.getPropertyGroup();
@@ -98,8 +128,24 @@ public class Player extends JPanel {
     public int calculateRent(int position) {
         SquareInfo info = SquareInfo.getBoardOrder()[position];
         int baseRent = info.getRent();
-        int count = ownedPropertiesGroupCount.getOrDefault(info.getPropertyGroup(), 1);
-        return baseRent * count;
+        int houses = housesOnProperty.getOrDefault(position, 0);
+
+        // jeżeli brak domków, ale monopol – można np. podwoić czynsz
+        if (houses == 0) {
+            String group = info.getPropertyGroup();
+            int ownedInGroup = ownedPropertiesGroupCount.getOrDefault(group, 0);
+            if (ownedInGroup == SquareInfo.getPropertiesByGroup(group).size()) {
+                return baseRent * 2;  // klasyczne Monopoly: czynsz x2 za monopol bez domków
+            }
+            return baseRent;
+        }
+
+        // z domkami: czynsz rośnie liniowo (np. baseRent * (houses+1))
+        return baseRent * (houses + 1);
+    }
+
+    public HashMap<Integer,Integer> getHousesOnPropertyMap() {
+        return (HashMap<Integer, Integer>) Collections.unmodifiableMap(housesOnProperty);
     }
 
     public void payRentTo(Player owner) {

@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class BoardPanel extends JLayeredPane {
@@ -110,6 +111,49 @@ public class BoardPanel extends JLayeredPane {
         return label;
     }
 
+    private void drawHouses(Graphics g) {
+        int width = getWidth();
+        int height = getHeight();
+        // zakładamy planszę 11×11 w całym obszarze
+        int cell = Math.min(width, height) / 11;
+
+        // iterujemy obie wizualizacje graczy
+        for (Player p : new Player[]{ player1View, player2View }) {
+            HashMap<Integer,Integer> houses = p.getHousesOnPropertyMap();
+            for (HashMap.Entry<Integer,Integer> e : houses.entrySet()) {
+                int pos = e.getKey();
+                int count = e.getValue();
+                if (count <= 0) continue;
+
+                // przeliczanie pozycji na wiersz/kolumnę
+                int row, col;
+                if (pos < 11) {            // dolna krawędź
+                    row = 10; col = 10 - pos;
+                } else if (pos < 20) {     // lewa krawędź
+                    row = 10 - (pos - 11) - 1; col = 0;
+                } else if (pos < 31) {     // górna krawędź
+                    row = 0; col = pos - 20;
+                } else {                   // prawa krawędź
+                    row = pos - 31 + 1; col = 10;
+                }
+
+                int x0 = col * cell;
+                int y0 = row * cell;
+                int w = cell / 6;
+                int h = cell / 6;
+
+                // rysuj obok siebie max 4 domki u dołu kafelka
+                for (int i = 0; i < count; i++) {
+                    int x = x0 + 2 + i * (w + 2);
+                    int y = y0 + cell - h - 2;
+                    g.setColor(Color.GREEN);
+                    g.fillRect(x, y, w, h);
+                    g.setColor(Color.BLACK);
+                    g.drawRect(x, y, w, h);
+                }
+            }
+        }
+    }
 
     public Board getGameBoard() {
         return gameBoard;
@@ -129,5 +173,10 @@ public class BoardPanel extends JLayeredPane {
 
     public Player getPlayer2View() {
         return player2View;
+    }
+
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        drawHouses(g);
     }
 }

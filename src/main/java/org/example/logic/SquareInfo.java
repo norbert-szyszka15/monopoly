@@ -1,5 +1,7 @@
 package org.example.logic;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -58,7 +60,16 @@ public enum SquareInfo {
     private final int rent;
     private final String propertyGroup;
 
-    private static final HashMap<String, List<SquareInfo>> map = new HashMap<>();
+    private static final HashMap<String, List<SquareInfo>> GROUPS = new HashMap<>();
+
+    static {
+        for (SquareInfo sq : values()) {
+            // pomijamy czynności i stacje
+            if (sq.type == SquareType.PROPERTY && !"COMPANY".equals(sq.propertyGroup) && !"STATION".equals(sq.propertyGroup)) {
+                GROUPS.computeIfAbsent(sq.propertyGroup, k -> new ArrayList<>()).add(sq);
+            }
+        }
+    }
 
     SquareInfo(String displayName, SquareType type, int price, int rent, String propertyGroup) {
         this.displayName = displayName;
@@ -81,6 +92,9 @@ public enum SquareInfo {
         return price;
     }
 
+    public static List<SquareInfo> getPropertiesByGroup(String group) {
+        return GROUPS.getOrDefault(group, Collections.emptyList());
+    }
 
     public int getRent() {
         return rent;

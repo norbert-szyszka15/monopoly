@@ -15,7 +15,7 @@ public class GuiMain extends JFrame {
     private final CardLayout c1 = new CardLayout();
 
     private JPanel playerAssetsPanel;
-    private JButton buttonNextTurn, buttonRollDice, buttonPayRent, buttonBuy;
+    private JButton buttonNextTurn, buttonRollDice, buttonPayRent, buttonBuy, buttonBuildHouse;
     private JTextArea panelPlayer1TextArea, panelPlayer2TextArea;
 
     private Player player1, player2;
@@ -93,6 +93,23 @@ public class GuiMain extends JFrame {
         });
         rightPanel.add(buttonBuy);
 
+        // --- BUILD HOUSE BUTTON ---
+        buttonBuildHouse = new JButton("BUILD HOUSE");
+        buttonBuildHouse.setBounds(81, 554, 246, 29);
+        buttonBuildHouse.setEnabled(false);
+        buttonBuildHouse.addActionListener(e -> {
+            Player currentPlayer = players.get(nowPlaying);
+            int pos = currentPlayer.getCurrentPlayerPosition();
+            currentPlayer.buildHouse(pos);
+            infoConsole.setText("Postawiłeś domek na polu " + boardPanel.getGameBoard().getAllSquares().get(pos).getName());
+            // po postawieniu sprawdź, czy dalej można budować na tym polu
+            buttonBuildHouse.setEnabled(currentPlayer.canBuildHouse(pos));
+            boardPanel.repaint();
+            updatePanelPlayer1TextArea();
+            updatePanelPlayer2TextArea();
+        });
+        rightPanel.add(buttonBuildHouse);
+
         buttonPayRent = new JButton("PAY RENT");
         buttonPayRent.setBounds(210, 478, 117, 29);
         buttonPayRent.setEnabled(false);
@@ -158,6 +175,14 @@ public class GuiMain extends JFrame {
                 buttonPayRent.setEnabled(false);
             }
 
+            // sprawdź, czy możemy budować domek na obecnej pozycji
+            if (currentPlayer.canBuildHouse(pos)) {
+                buttonBuildHouse.setEnabled(true);
+            } else {
+                buttonBuildHouse.setEnabled(false);
+            }
+
+
             buttonRollDice.setEnabled(false);
 
             if (isDouble) {
@@ -179,6 +204,7 @@ public class GuiMain extends JFrame {
             buttonNextTurn.setEnabled(false);
             buttonPayRent.setEnabled(false);
             buttonBuy.setEnabled(false);
+            buttonBuildHouse.setEnabled(false);
 
             if ((nowPlaying == 0 && doubleDiceforPlayer1) || (nowPlaying == 1 && doubleDiceforPlayer2)) {
                 if (nowPlaying == 0) doubleDiceforPlayer1 = false;
@@ -268,6 +294,7 @@ public class GuiMain extends JFrame {
         buttonNextTurn.setEnabled(false);
         buttonPayRent.setEnabled(false);
         buttonBuy.setEnabled(false);
+        buttonBuildHouse.setEnabled(false);
     }
 
     private void updateGameUI() {
