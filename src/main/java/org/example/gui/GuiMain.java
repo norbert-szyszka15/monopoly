@@ -213,7 +213,7 @@ public class GuiMain extends JFrame {
 
         // Player Info
         playerAssetsPanel = new JPanel();
-        playerAssetsPanel.setBounds(81, 28, 246, 189);
+        playerAssetsPanel.setBounds(81, 28, 246, 589);
         playerAssetsPanel.setLayout(c1);
         rightPanel.add(playerAssetsPanel);
 
@@ -222,14 +222,15 @@ public class GuiMain extends JFrame {
         panelPlayer1.setLayout(null);
         playerAssetsPanel.add(panelPlayer1, "1");
 
+
         JLabel panelPlayer1Title = new JLabel("Player 1 All Wealth");
         panelPlayer1Title.setForeground(Color.WHITE);
         panelPlayer1Title.setHorizontalAlignment(SwingConstants.CENTER);
-        panelPlayer1Title.setBounds(0, 6, 240, 16);
+        panelPlayer1Title.setBounds(0, 5, 240, 16);
         panelPlayer1.add(panelPlayer1Title);
 
         panelPlayer1TextArea = new JTextArea();
-        panelPlayer1TextArea.setBounds(10, 34, 230, 549);
+        panelPlayer1TextArea.setBounds(10, 34, 230, 550);
         panelPlayer1.add(panelPlayer1TextArea);
 
         JPanel panelPlayer2 = new JPanel();
@@ -237,14 +238,15 @@ public class GuiMain extends JFrame {
         panelPlayer2.setLayout(null);
         playerAssetsPanel.add(panelPlayer2, "2");
 
+
         JLabel panelPlayer2Title = new JLabel("Player 2 All Wealth");
         panelPlayer2Title.setForeground(Color.WHITE);
         panelPlayer2Title.setHorizontalAlignment(SwingConstants.CENTER);
-        panelPlayer2Title.setBounds(0, 6, 240, 16);
+        panelPlayer2Title.setBounds(0, 5, 540, 16);
         panelPlayer2.add(panelPlayer2Title);
 
         panelPlayer2TextArea = new JTextArea();
-        panelPlayer2TextArea.setBounds(10, 34, 230, 349);
+        panelPlayer2TextArea.setBounds(10, 34, 230, 550);
         panelPlayer2.add(panelPlayer2TextArea);
 
         // Info console
