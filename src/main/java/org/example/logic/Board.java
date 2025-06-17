@@ -58,7 +58,7 @@ public class Board extends JPanel {
 
     public int getMiasteczkoPosition() {
         for (int i = 0; i < allSquares.size(); i++) {
-            if (allSquares.get(i).getName().contains("MIASTECZKO STUDENCKIE")) {
+            if (allSquares.get(i).getName().contains("MIASTECZKO\nSTUDENCKIE")) {
                 return i;
             }
         }
