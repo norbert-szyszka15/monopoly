@@ -1,15 +1,12 @@
 package org.example.gui;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
-import javax.swing.*;
 
 public class Dice extends JPanel {
     private final Random rand = new Random();
     private int faceValue = 1;
-    private static final int DOT_SIZE = 8;
-    private static final int DOT_OFFSET = 12;
-
 
     private enum DotPosition {
         TOP_LEFT    (-1,  1),
@@ -20,8 +17,8 @@ public class Dice extends JPanel {
         MID_LEFT    (-1,  0),
         MID_RIGHT   ( 1,  0);
 
-        final int xDir; // -1 = lewo, 0 = środek, 1 = prawo
-        final int yDir; // -1 = góra, 0 = środek, 1 = dół
+        final int xDir;
+        final int yDir;
 
         DotPosition(int xDir, int yDir) {
             this.xDir = xDir;
@@ -29,27 +26,27 @@ public class Dice extends JPanel {
         }
     }
 
-    public Dice(int x, int y, int width, int height) {
-        setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        setBounds(x, y, width, height);
+    public Dice() {
         setBackground(new Color(240, 240, 240));
+        setOpaque(true);
+        setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     }
 
-    private void drawDot(Graphics g, DotPosition pos) {
+    private void drawDot(Graphics g, DotPosition pos, int dotSize, int offset) {
         Graphics2D g2d = (Graphics2D)g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int x = getWidth()/2  + (pos.xDir * DOT_OFFSET) - DOT_SIZE/2;
-        int y = getHeight()/2 + (pos.yDir * DOT_OFFSET) - DOT_SIZE/2;
+        int x = getWidth() / 2 + (pos.xDir * offset) - dotSize / 2;
+        int y = getHeight() / 2 + (pos.yDir * offset) - dotSize / 2;
 
-        g2d.fillOval(x, y, DOT_SIZE, DOT_SIZE);
+        g2d.fillOval(x, y, dotSize, dotSize);
     }
 
-    private void drawFace(Graphics g, DotPosition... positions) {
+    private void drawFace(Graphics g, int dotSize, int offset, DotPosition... positions) {
         g.setColor(Color.BLACK);
         for (DotPosition pos : positions) {
-            drawDot(g, pos);
+            drawDot(g, pos, dotSize, offset);
         }
     }
 
@@ -57,15 +54,23 @@ public class Dice extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        switch(faceValue) {
-            case 1 -> drawFace(g, DotPosition.CENTER);
-            case 2 -> drawFace(g, DotPosition.TOP_LEFT, DotPosition.BOTTOM_RIGHT);
-            case 3 -> drawFace(g, DotPosition.TOP_LEFT, DotPosition.CENTER, DotPosition.BOTTOM_RIGHT);
-            case 4 -> drawFace(g, DotPosition.TOP_LEFT, DotPosition.TOP_RIGHT,
+        int min = Math.min(getWidth(), getHeight());
+        int dotSize = min / 6;           // proporcjonalna wielkość kropki
+        int offset = min / 3;            // odległość od środka
+
+        switch (faceValue) {
+            case 1 -> drawFace(g, dotSize, offset, DotPosition.CENTER);
+            case 2 -> drawFace(g, dotSize, offset, DotPosition.TOP_LEFT, DotPosition.BOTTOM_RIGHT);
+            case 3 -> drawFace(g, dotSize, offset, DotPosition.TOP_LEFT, DotPosition.CENTER, DotPosition.BOTTOM_RIGHT);
+            case 4 -> drawFace(g, dotSize, offset,
+                    DotPosition.TOP_LEFT, DotPosition.TOP_RIGHT,
                     DotPosition.BOTTOM_LEFT, DotPosition.BOTTOM_RIGHT);
-            case 5 -> drawFace(g, DotPosition.TOP_LEFT, DotPosition.TOP_RIGHT, DotPosition.CENTER,
+            case 5 -> drawFace(g, dotSize, offset,
+                    DotPosition.TOP_LEFT, DotPosition.TOP_RIGHT,
+                    DotPosition.CENTER,
                     DotPosition.BOTTOM_LEFT, DotPosition.BOTTOM_RIGHT);
-            case 6 -> drawFace(g, DotPosition.TOP_LEFT, DotPosition.TOP_RIGHT,
+            case 6 -> drawFace(g, dotSize, offset,
+                    DotPosition.TOP_LEFT, DotPosition.TOP_RIGHT,
                     DotPosition.MID_LEFT, DotPosition.MID_RIGHT,
                     DotPosition.BOTTOM_LEFT, DotPosition.BOTTOM_RIGHT);
         }

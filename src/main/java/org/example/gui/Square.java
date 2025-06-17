@@ -1,29 +1,52 @@
 package org.example.gui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Shape;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
-
 public class Square extends JPanel {
-    int number;
+    private static int totalSquares = 0;
+    private final int number;
     private final String name;
-    String description;
-    JLabel nameLabel;
-    static int totalSquares = 0;
+    private final JLabel nameLabel;
     private int price;
     private int rentPrice;
+    private boolean isRentPaid = false;
 
-    public void setRentPrice(int renPrice) {
-        this.rentPrice = renPrice;
+    public Square(String labelString, int rotationDegrees) {
+        number = totalSquares++;
+        name = labelString;
+        setBorder(new LineBorder(Color.BLACK));
+        setLayout(null);
+        setOpaque(false); // by plansza pod spodem była widoczna
+
+        nameLabel = new JLabel(labelString, SwingConstants.CENTER);
+        nameLabel.setFont(new Font("SansSerif", Font.PLAIN, 9));
+        nameLabel.setOpaque(false);
+
+        // Obsługa rotacji tekstu
+        if (rotationDegrees != 0) {
+            nameLabel.setUI(new VerticalLabelUI(rotationDegrees));
+        }
+
+        add(nameLabel);
+    }
+
+    public void setRentPaid(boolean rentPaid) {
+        isRentPaid = rentPaid;
+    }
+
+    public boolean isRentPaid() {
+        return isRentPaid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setRentPrice(int rentPrice) {
+        this.rentPrice = rentPrice;
     }
 
     public int getRentPrice() {
@@ -38,115 +61,67 @@ public class Square extends JPanel {
         return price;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public void doLayout() {
+        // nameLabel zajmuje całą powierzchnię, z marginesem
+        nameLabel.setBounds(0, 0, getWidth(), getHeight());
+        float fontScale = Math.min(getWidth(), getHeight()) / 10f; //ustawienie skalowania czcionki 12f mniejsza, 8f wieksza
+        nameLabel.setFont(nameLabel.getFont().deriveFont(fontScale));
     }
 
-    public Square(int xValue, int yValue, int width, int height, String labelString, int rotationDegrees) {
-        number = totalSquares;
-        totalSquares++;
-        setBorder(new LineBorder(Color.BLACK));
-        setBounds(xValue, yValue, width, height);
-        name = labelString;
-        this.setLayout(null);
-
-        if(rotationDegrees == 0) {
-            nameLabel = new JLabel(labelString);
-            nameLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
-            nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            nameLabel.setBounds(0,20,this.getWidth(),20);
-            this.add(nameLabel);
-        } else {
-            nameLabel = new JLabel(labelString) {
-                protected void paintComponent(Graphics graphics) {
-                    Graphics2D graphics2 = (Graphics2D) graphics;
-                    graphics2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    AffineTransform at = graphics2.getTransform();
-                    Shape oldShape = graphics2.getClip();
-                    double x = getWidth() / 2.0;
-                    double y = getHeight() / 2.0;
-                    at.rotate(Math.toRadians(rotationDegrees), x, y);
-                    graphics2.setTransform(at);
-                    graphics2.setClip(oldShape);
-                    super.paintComponent(graphics2);
-                }
-            };
-
-            if(rotationDegrees == 90) {
-                nameLabel.setBounds(20, 0, this.getWidth(), this.getHeight());
-            }
-            if(rotationDegrees == -90) {
-                nameLabel.setBounds(-10, 0, this.getWidth(), this.getHeight());
-            }
-            if(rotationDegrees == 180) {
-                nameLabel.setBounds(0, 0, this.getWidth(), this.getHeight());
-            }
-            if(rotationDegrees == 135 || rotationDegrees == -135 || rotationDegrees == -45 || rotationDegrees == 45) {
-                nameLabel.setBounds(0, 0, this.getWidth(), this.getHeight());
-            }
-            nameLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
-            nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-
-            this.add(nameLabel);
-        }
-    }
-
-    public void paintComponent(Graphics graphics) {
+    @Override
+    protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
+        Graphics2D g = (Graphics2D) graphics;
+
         int w = getWidth();
         int h = getHeight();
-        int t = 20;
+        int t = (int) (Math.min(w, h) * 0.2); // grubość paska
+        // TŁO CAŁEGO POLA
+        g.setColor(new Color(230, 230, 230)); // lub dowolny kolor
+        g.fillRect(0, 0, w, h);
 
         switch (number) {
-            // TOP SQUARES
-            case 1, 3 -> {
-                graphics.setColor(new Color(146, 84, 53));
-                graphics.fillRect(0, h - t, w, t);
-            }
-            case 6, 8, 9 -> {
-                graphics.setColor(new Color(168, 226, 248));
-                graphics.fillRect(0, h - t, w, t);
-            }
-
-            // RIGHT SQUARES
-            case 11, 13, 14 -> {
-                graphics.setColor(new Color(217, 58, 149));
-                graphics.fillRect(0, 0, t, h);
-            }
-            case 16, 17, 19 -> {
-                graphics.setColor(new  Color(245, 149, 28));
-                graphics.fillRect(0, 0, t, h);
-            }
-
-            // BOTTOM SQUARES
-            case 21, 23, 24 -> {
-                graphics.setColor(new Color(235, 28, 34));
-                graphics.fillRect(0, 0, w, t);
-            }
-            case 26,27,29 -> {
-                graphics.setColor(new Color(253, 243, 0));
-                graphics.fillRect(0, 0, w, t);
-            }
-
-            // LEFT SQUARES
-            case 31, 32, 34-> {
-                graphics.setColor(new  Color(29, 180, 88));
-                graphics.fillRect(w-t, 0, t, h);
-            }
-            case 37, 39 -> {
-                graphics.setColor(new  Color(0, 115, 186));
-                graphics.fillRect(w-t, 0, t, h);
-            }
-
-            default -> {}
+            // TOP
+            case 1, 3 -> g.setColor(new Color(146, 84, 53));
+            case 6, 8, 9 -> g.setColor(new Color(168, 226, 248));
+            // RIGHT
+            case 11, 13, 14 -> g.setColor(new Color(217, 58, 149));
+            case 16, 17, 19 -> g.setColor(new Color(245, 149, 28));
+            // BOTTOM
+            case 21, 23, 24 -> g.setColor(new Color(235, 28, 34));
+            case 26, 27, 29 -> g.setColor(new Color(253, 243, 0));
+            // LEFT
+            case 31, 32, 34 -> g.setColor(new Color(29, 180, 88));
+            case 37, 39 -> g.setColor(new Color(0, 115, 186));
+            default -> { return; }
         }
+
+        if (number <= 10) { g.fillRect(0, h - t, w, t); } // top
+        else if (number <= 20) { g.fillRect(0, 0, t, h); } // right
+        else if (number <= 30) { g.fillRect(0, 0, w, t); } // bottom
+        else { g.fillRect(w - t, 0, t, h); } // left
     }
 
-    private boolean isRentPaid = false;
-    public boolean isRentPaid() {
-        return isRentPaid;
-    }
-    public void setRentPaid(boolean rentPaid) {
-        isRentPaid = rentPaid;
+    // Pomocnicza klasa UI do pionowego tekstu
+    static class VerticalLabelUI extends javax.swing.plaf.basic.BasicLabelUI {
+        final int degrees;
+
+        public VerticalLabelUI(int degrees) {
+            this.degrees = degrees;
+        }
+
+        @Override
+        public void paint(Graphics g, JComponent c) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            JLabel label = (JLabel) c;
+            g2.setFont(label.getFont());
+            g2.setColor(label.getForeground());
+            AffineTransform at = new AffineTransform();
+            at.rotate(Math.toRadians(degrees), c.getWidth() / 2.0, c.getHeight() / 2.0);
+            g2.setTransform(at);
+            super.paint(g2, c);
+            g2.dispose();
+        }
     }
 }
