@@ -10,19 +10,21 @@ import java.awt.*;
 import java.util.ArrayList;import java.util.HashMap;
 
 public class Player extends JPanel {
-    private GuiMain guiMain;
-    static int totalPlayers; // może się przydać później, do rozpatrzenia
-    static HashMap<Integer, Integer> landAndMortgageRegister = new HashMap<>();
-    private HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
-    private HashMap<Integer,Integer> housesOnProperty = new HashMap<>();
+    private final GuiMain guiMain;
     JLabel labelPlayerNumber;
-    private int playerNumber;
-    private boolean skipNextTurn = false; // flaga czy gracz skipuje kolejke
-    private int currentPlayerPosition = 0; // lokalizacja gracza na planszy
-    private ArrayList<Integer> ownedProperties = new ArrayList<>(); // posiadane akty własności
-    private int wallet = 3200; // początkowa ilość gotówki gracza
-    public boolean houseBuiltThisTurn = false;
 
+    static int totalPlayers; // może się przydać później, do rozpatrzenia
+    private final int playerNumber;
+    private int currentPlayerPosition = 0; // lokalizacja gracza na planszy
+    private int wallet = 3200; // początkowa ilość gotówki gracza
+
+    static HashMap<Integer, Integer> landAndMortgageRegister = new HashMap<>();
+    private final HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
+    private final HashMap<Integer,Integer> housesOnProperty = new HashMap<>();
+    private final ArrayList<Integer> ownedProperties = new ArrayList<>(); // posiadane akty własności
+
+    private boolean skipNextTurn = false; // flaga czy gracz skipuje kolejke
+    public boolean houseBuiltThisTurn = false;
 
     public Player(int playerNumber, Color color,GuiMain guiMain) {
         this.guiMain = guiMain;
@@ -44,8 +46,26 @@ public class Player extends JPanel {
         return wallet;
     }
 
+    public int getCurrentPlayerPosition() {
+        return currentPlayerPosition;
+    }
+
+    public int getPlayerNumber() {
+        return playerNumber;
+    }
+
     public void setSkipNextTurn(boolean skip) {
         this.skipNextTurn = skip;
+    }
+
+    public void setPosition(int position) {
+        this.currentPlayerPosition = position;
+
+        // Aktualizacja pozycji graficznej
+        Square targetSquare = Board.getInstance().getSquareAtPosition(position);
+        int x = targetSquare.getX() + (playerNumber == 1 ? 15 : 45);
+        int y = targetSquare.getY() + 15;
+        this.setLocation(x, y);
     }
 
     public boolean shouldSkipNextTurn() {
@@ -65,18 +85,6 @@ public class Player extends JPanel {
     public void depositMoneyToWallet(int depositAmount) {
         wallet += depositAmount;
         System.out.println("Gracz " + playerNumber + " zarobił trochę pieniędzy!");
-    }
-
-    public int getCurrentPlayerPosition() {
-        return currentPlayerPosition;
-    }
-
-    public int getPlayerNumber() {
-        return playerNumber;
-    }
-
-    public boolean hasOwnedProperties() {
-        return ownedProperties.contains(playerNumber);
     }
 
     public boolean canBuildHouse(int position) {
@@ -155,7 +163,7 @@ public class Player extends JPanel {
         int houses = housesOnProperty.getOrDefault(position, 0);
         int baseRent = info.getRent();
 
-        // jeżeli brak domków, ale monopol – można np. podwoić czynsz
+        // jeżeli brak domków, ale monopol – czynsz podwojony
         if (houses == 0) {
             int ownedInGroup = ownedPropertiesGroupCount.getOrDefault(group, 0);
             if (ownedInGroup == SquareInfo.getPropertiesByGroup(group).size()) {
@@ -185,10 +193,6 @@ public class Player extends JPanel {
         owner.depositMoneyToWallet(rentAmount);
     }
 
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-    }
-
     public String drawCard() {
         Card drawnCard = Card.getRandomCard();
         System.out.println("Gracz " + playerNumber + " wylosował kartę: " + drawnCard.getDescription());
@@ -215,13 +219,7 @@ public class Player extends JPanel {
         }
     }
 
-    public void setPosition(int position) {
-        this.currentPlayerPosition = position;
-
-        // Aktualizacja pozycji graficznej
-        Square targetSquare = Board.getInstance().getSquareAtPosition(position);
-        int x = targetSquare.getX() + (playerNumber == 1 ? 15 : 45);
-        int y = targetSquare.getY() + 15;
-        this.setLocation(x, y);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
     }
 }

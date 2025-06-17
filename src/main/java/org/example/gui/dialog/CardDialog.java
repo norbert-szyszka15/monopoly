@@ -32,7 +32,7 @@ public class CardDialog extends JDialog {
         ok.setFocusPainted(false);
         ok.setBackground(new Color(70,130,180));
         ok.setForeground(Color.WHITE);
-        ok.addActionListener(e -> dispose());
+        ok.addActionListener(_ -> dispose());
 
         content.add(lbl, BorderLayout.CENTER);
         content.add(ok, BorderLayout.SOUTH);

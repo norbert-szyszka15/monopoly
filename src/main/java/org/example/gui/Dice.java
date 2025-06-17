@@ -1,7 +1,9 @@
 package org.example.gui;
 
 import javax.swing.*;
+
 import java.awt.*;
+
 import java.util.Random;
 
 public class Dice extends JPanel {
@@ -24,12 +26,16 @@ public class Dice extends JPanel {
             this.xDir = xDir;
             this.yDir = yDir;
         }
-    }
 
+    }
     public Dice() {
         setBackground(new Color(240, 240, 240));
         setOpaque(true);
         setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+    }
+
+    public int getFaceValue() {
+        return faceValue;
     }
 
     private void drawDot(Graphics g, DotPosition pos, int dotSize, int offset) {
@@ -48,6 +54,11 @@ public class Dice extends JPanel {
         for (DotPosition pos : positions) {
             drawDot(g, pos, dotSize, offset);
         }
+    }
+
+    public void rollDice() {
+        faceValue = rand.nextInt(6) + 1;
+        repaint();
     }
 
     @Override
@@ -74,14 +85,5 @@ public class Dice extends JPanel {
                     DotPosition.MID_LEFT, DotPosition.MID_RIGHT,
                     DotPosition.BOTTOM_LEFT, DotPosition.BOTTOM_RIGHT);
         }
-    }
-
-    public void rollDice() {
-        faceValue = rand.nextInt(6) + 1;
-        repaint();
-    }
-
-    public int getFaceValue() {
-        return faceValue;
     }
 }

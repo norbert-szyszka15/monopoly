@@ -6,7 +6,9 @@ import org.example.logic.strategySpecialField.*;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
 import java.awt.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +21,7 @@ public class Board extends JPanel {
     private final Map<Integer, SquareAction> squareActions = new HashMap<>();
     private final List<RelativeComponent> relativeComponents = new ArrayList<>();
 
-    public Board(int xValue, int yValue, int width, int height) {
+    public Board() {
         instance = this;
         setBorder(new LineBorder(Color.BLACK));
         setLayout(null);
@@ -100,7 +102,7 @@ public class Board extends JPanel {
                 unbuyableSquares.add(square);
             } else {
                 square.setPrice(squareInfo.getPrice());
-                square.setRentPrice(squareInfo.getRent());
+                square.setRentPrice();
                 square.refreshLabel();
             }
             System.out.println("[" + squareInfo.getDisplayName() + "] cena: " + squareInfo.getPrice());
