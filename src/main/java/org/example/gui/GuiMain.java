@@ -89,7 +89,6 @@ public class GuiMain extends JFrame {
         });
         rightPanel.add(buttonBuy);
 
-        // --- BUILD HOUSE BUTTON ---
         buttonBuildHouse = new JButton("BUILD HOUSE");
         buttonBuildHouse.setBounds(81, 554, 246, 29);
         buttonBuildHouse.setEnabled(false);
@@ -97,8 +96,8 @@ public class GuiMain extends JFrame {
             Player currentPlayer = players.get(nowPlaying);
             int pos = currentPlayer.getCurrentPlayerPosition();
             currentPlayer.buildHouse(pos);
+            boardPanel.repaint();
             infoConsole.setText("Postawiłeś domek na polu " + boardPanel.getGameBoard().getAllSquares().get(pos).getName());
-            // po postawieniu sprawdź, czy dalej można budować na tym polu
             buttonBuildHouse.setEnabled(currentPlayer.canBuildHouse(pos));
             boardPanel.repaint();
             updatePanelPlayer1TextArea();
@@ -171,7 +170,6 @@ public class GuiMain extends JFrame {
                 buttonBuildHouse.setEnabled(false);
             }
 
-
             buttonRollDice.setEnabled(false);
 
             if (isDouble) {
@@ -205,10 +203,13 @@ public class GuiMain extends JFrame {
                     nowPlaying = (nowPlaying + 1) % players.size();
                 }
             }
+            Player p = players.get(nowPlaying);
+            p.resetHouseBuiltFlag();
 
             updateGameUI();
         });
         rightPanel.add(buttonNextTurn);
+        buttonBuildHouse.setEnabled(false);
 
         // Player Info
         playerAssetsPanel = new JPanel();

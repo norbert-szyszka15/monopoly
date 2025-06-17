@@ -30,6 +30,19 @@ public class BoardPanel extends JLayeredPane {
         add(gameBoard, Integer.valueOf(0));
         gameBoard.setBounds(0, 0, 1112, 1112); // początkowo, ale będzie skalowane razem z panelem
 
+        JComponent houseLayer = new JComponent() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                // tu wywołujemy Twoją metodę rysującą domki
+                drawHouses(g);
+            }
+        };
+        // nakładka w tej samej warstwie co gracze/kostki (1), ale dodana przed nimi
+        add(houseLayer, Integer.valueOf(1));
+        houseLayer.setBounds(0, 0, 1112, 1112);
+
+
         // 2. Gracze
         player1View = new Player(1, Color.RED);
         player2View = new Player(2, Color.BLUE);
@@ -75,6 +88,7 @@ public class BoardPanel extends JLayeredPane {
             public void componentResized(ComponentEvent e) {
                 resizeRelativeComponents();
                 gameBoard.setBounds(0, 0, getWidth(), getHeight());
+                houseLayer.setBounds(0, 0, getWidth(), getHeight());
             }
         });
     }
@@ -112,48 +126,57 @@ public class BoardPanel extends JLayeredPane {
     }
 
     private void drawHouses(Graphics g) {
-        int width = getWidth();
-        int height = getHeight();
-        // zakładamy planszę 11×11 w całym obszarze
-        int cell = Math.min(width, height) / 11;
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // iterujemy obie wizualizacje graczy
-        for (Player p : new Player[]{ player1View, player2View }) {
+        for (Player p : new Player[]{player1View, player2View}) {
             HashMap<Integer,Integer> houses = p.getHousesOnPropertyMap();
             for (HashMap.Entry<Integer,Integer> e : houses.entrySet()) {
-                int pos = e.getKey();
+                int pos   = e.getKey();
                 int count = e.getValue();
                 if (count <= 0) continue;
 
-                // przeliczanie pozycji na wiersz/kolumnę
-                int row, col;
-                if (pos < 11) {            // dolna krawędź
-                    row = 10; col = 10 - pos;
-                } else if (pos < 20) {     // lewa krawędź
-                    row = 10 - (pos - 11) - 1; col = 0;
-                } else if (pos < 31) {     // górna krawędź
-                    row = 0; col = pos - 20;
-                } else {                   // prawa krawędź
-                    row = pos - 31 + 1; col = 10;
-                }
+                Square sq = gameBoard.getSquareAtPosition(pos);
+                Rectangle r = sq.getBounds();
 
-                int x0 = col * cell;
-                int y0 = row * cell;
-                int w = cell / 6;
-                int h = cell / 6;
+                int w = r.width  / 6;
+                int h = r.height / 6;
 
-                // rysuj obok siebie max 4 domki u dołu kafelka
+                boolean bottom = r.y > gameBoard.getHeight()/2;
+                boolean top    = r.y < gameBoard.getHeight()/2 && !bottom;
+                boolean left   = !bottom && !top && r.x < gameBoard.getWidth()/2;
+                boolean right  = !bottom && !top && r.x > gameBoard.getWidth()/2;
+
+                g2.setColor(Color.GREEN);
                 for (int i = 0; i < count; i++) {
-                    int x = x0 + 2 + i * (w + 2);
-                    int y = y0 + cell - h - 2;
-                    g.setColor(Color.GREEN);
-                    g.fillRect(x, y, w, h);
-                    g.setColor(Color.BLACK);
-                    g.drawRect(x, y, w, h);
+                    int x, y;
+                    if (bottom) {
+                        // od lewej u dołu kafelka
+                        x = r.x + 2 + i * (w + 2);
+                        y = r.y + r.height - h - 2;
+                    } else if (top) {
+                        // od lewej u góry kafelka
+                        x = r.x + 2 + i * (w + 2);
+                        y = r.y + 2;
+                    } else if (left) {
+                        // od góry po lewej
+                        x = r.x + 2;
+                        y = r.y + 2 + i * (h + 2);
+                    } else { // right
+                        // od góry po prawej
+                        x = r.x + r.width - w - 2;
+                        y = r.y + 2 + i * (h + 2);
+                    }
+
+                    g2.fillRect(x, y, w, h);
+                    g2.setColor(Color.BLACK);
+                    g2.drawRect(x, y, w, h);
+                    g2.setColor(Color.GREEN);
                 }
             }
         }
     }
+
 
     public Board getGameBoard() {
         return gameBoard;
@@ -177,6 +200,5 @@ public class BoardPanel extends JLayeredPane {
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawHouses(g);
     }
 }

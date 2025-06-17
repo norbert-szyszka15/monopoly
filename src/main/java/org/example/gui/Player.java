@@ -8,9 +8,7 @@ import org.example.logic.strategySpecialField.SquareAction;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.ArrayList;import java.util.HashMap;
 
 public class Player extends JPanel {
     static int totalPlayers; // może się przydać później, do rozpatrzenia
@@ -23,6 +21,7 @@ public class Player extends JPanel {
     private int currentPlayerPosition = 0; // lokalizacja gracza na planszy
     private ArrayList<Integer> ownedProperties = new ArrayList<>(); // posiadane akty własności
     private int wallet = 3200; // początkowa ilość gotówki gracza
+    public boolean houseBuiltThisTurn = false;
 
     public Player(int xValue, int yValue, int width, int height) {
         setBorder(new LineBorder(Color.BLACK));
@@ -84,6 +83,9 @@ public class Player extends JPanel {
     }
 
     public boolean canBuildHouse(int position) {
+        if (houseBuiltThisTurn) {
+            return false;
+        }
         // gracz musi być właścicielem
         if (!ownedProperties.contains(position)) return false;
 
@@ -105,10 +107,14 @@ public class Player extends JPanel {
             throw new IllegalStateException("Nie możesz postawić domu na tej nieruchomości.");
         }
         housesOnProperty.merge(position, 1, Integer::sum);
+        houseBuiltThisTurn = true;
 
-        // opcjonalnie: ściągnij koszty budowy
-        // int cost = SquareInfo.getBoardOrder()[position].getHouseCost();
-        // withdrawMoneyFromWallet(cost);
+        int cost = 100;
+        withdrawMoneyFromWallet(cost);
+    }
+
+    public void resetHouseBuiltFlag() {
+        houseBuiltThisTurn = false;
     }
 
     public void buyProperty(int position) {
