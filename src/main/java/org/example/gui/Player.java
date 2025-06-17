@@ -119,15 +119,12 @@ public class Player extends JPanel {
         super.paintComponent(g);
     }
 
-    public String drawChanceCard() {
+    public String drawCard() {
         Card drawnCard = Card.getRandomCard();
         System.out.println("Gracz " + playerNumber + " wylosował kartę: " + drawnCard.getDescription());
         drawnCard.execute(this);
         return drawnCard.getDescription(); // Zwróć opis do wyświetlenia
     }
-
-
-
 
     public void move(int sumOfDiceValues) {
         if (currentPlayerPosition + sumOfDiceValues >= 40) {
