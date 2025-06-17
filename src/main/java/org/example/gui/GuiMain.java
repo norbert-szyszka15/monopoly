@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class GuiMain extends JFrame {
     static JTextArea infoConsole;
-    static int nowPlaying = 0;
+    static int nowPlaying = 0, lastRollDiceSum = 0;
 
     private final ArrayList<Player> players = new ArrayList<>();
     private final CardLayout c1 = new CardLayout();
@@ -113,7 +113,7 @@ public class GuiMain extends JFrame {
             int pos = currentPlayer.getCurrentPlayerPosition();
             int owner = Player.landAndMortgageRegister.get(pos);
             Player squareOwner = players.get(owner == 1 ? 0 : 1);
-            currentPlayer.payRentTo(squareOwner);
+            currentPlayer.payRentTo(squareOwner, lastRollDiceSum);
             infoConsole.setText("Zapłaciłeś czynsz graczowi " + squareOwner.getPlayerNumber());
             buttonNextTurn.setEnabled(true);
             buttonPayRent.setEnabled(false);
@@ -133,6 +133,7 @@ public class GuiMain extends JFrame {
             dice1.rollDice();
             dice2.rollDice();
             int total = dice1.getFaceValue() + dice2.getFaceValue();
+            lastRollDiceSum = total;
             boolean isDouble = dice1.getFaceValue() == dice2.getFaceValue();
 
             currentPlayer.move(total);

@@ -6,7 +6,6 @@ import org.example.logic.SquareInfo;
 import org.example.logic.strategySpecialField.SquareAction;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.ArrayList;import java.util.HashMap;
 
@@ -81,14 +80,20 @@ public class Player extends JPanel {
     }
 
     public boolean canBuildHouse(int position) {
+        SquareInfo info = SquareInfo.getBoardOrder()[position];
+        String group = info.getPropertyGroup();
+
+        if ("COMPANY".equals(group) || "STATION".equals(group)) {
+            return false;
+        }
+
         if (houseBuiltThisTurn) {
             return false;
         }
         // gracz musi być właścicielem
-        if (!ownedProperties.contains(position)) return false;
-
-        SquareInfo info = SquareInfo.getBoardOrder()[position];
-        String group = info.getPropertyGroup();
+        if (!ownedProperties.contains(position)) {
+            return false;
+        }
 
         // musi mieć pełny monopol na grupę
         int ownedInGroup = ownedPropertiesGroupCount.getOrDefault(group, 0);
@@ -129,14 +134,29 @@ public class Player extends JPanel {
         }
     }
 
-    public int calculateRent(int position) {
+    public int calculateRent(int position, int rollDiceSum) {
         SquareInfo info = SquareInfo.getBoardOrder()[position];
-        int baseRent = info.getRent();
+        String group = info.getPropertyGroup();
+
+        // CZYNSZ DLA PÓL STATION: 50 x liczba posiadanych pól STAION
+        if ("STATION".equals(group)) {
+            int ownedStations = ownedPropertiesGroupCount.getOrDefault("STATION", 0);
+            return 50 * ownedStations;
+        }
+
+        // CZYNSZ DLA PÓL COMPANY: 5x lub 10x liczba wyrzuconych oczek
+        if ("COMPANY".equals(group)) {
+            int ownedCompanies =  ownedPropertiesGroupCount.getOrDefault(group, 0);
+            int rentMultiplier = (ownedCompanies == 2) ? 10 : 5;
+            return rollDiceSum * rentMultiplier;
+        }
+
+        // CZYNSZ DLA ZWYKŁYCH POSIADŁOŚCI: czynsz standardowy związany z liczbą domków
         int houses = housesOnProperty.getOrDefault(position, 0);
+        int baseRent = info.getRent();
 
         // jeżeli brak domków, ale monopol – można np. podwoić czynsz
         if (houses == 0) {
-            String group = info.getPropertyGroup();
             int ownedInGroup = ownedPropertiesGroupCount.getOrDefault(group, 0);
             if (ownedInGroup == SquareInfo.getPropertiesByGroup(group).size()) {
                 return baseRent * 2;  // klasyczne Monopoly: czynsz x2 za monopol bez domków
@@ -152,12 +172,12 @@ public class Player extends JPanel {
         return new HashMap<>(housesOnProperty);
     }
 
-    public void payRentTo(Player owner) {
+    public void payRentTo(Player owner, int rollDiceSum) {
         // Pobieramy aktualna pozycje do pózniejszej weryfikacji rent
         int position = this.currentPlayerPosition;
 
         // Pobieramy kwote czynszu
-        int rentAmount = owner.calculateRent(position);
+        int rentAmount = owner.calculateRent(position,  rollDiceSum);
         System.out.println(rentAmount);
 
         // Wykonujemy transakcje
