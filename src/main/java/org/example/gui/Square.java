@@ -29,7 +29,7 @@ public class Square extends JPanel {
         nameLabel.setBounds(0, 5, this.getWidth(), this.getHeight()); // może być dopasowane
         this.add(nameLabel);
 
-      
+
     }
 
     public String getDisplayLabel() {
@@ -40,34 +40,34 @@ public class Square extends JPanel {
         return "<html><div style='text-align:center'>" + name.replace("\n", "<br>") + "</div></html>";
     }
 
+    public boolean isRentPaid() {
+        return isRentPaid;
+    }
 
     public void setRentPaid(boolean rentPaid) {
         isRentPaid = rentPaid;
-    }
-
-    public boolean isRentPaid() {
-        return isRentPaid;
     }
 
     public String getName() {
         return name;
     }
 
+    public int getRentPrice() {
+        return rentPrice;
+    }
+
     public void setRentPrice(int rentPrice) {
         this.rentPrice = rentPrice;
     }
 
-    public int getRentPrice() {
-        return rentPrice;
+    public int getPrice() {
+        return price;
     }
 
     public void setPrice(int price) {
         this.price = price;
     }
 
-    public int getPrice() {
-        return price;
-    }
     public void refreshLabel() {
         nameLabel.setText(getDisplayLabel());
     }
@@ -105,13 +105,23 @@ public class Square extends JPanel {
             // LEFT
             case 31, 32, 34 -> g.setColor(new Color(29, 180, 88));
             case 37, 39 -> g.setColor(new Color(0, 115, 186));
-            default -> { return; }
+            default -> {
+                return;
+            }
         }
 
-        if (number <= 10) { g.fillRect(0, h - t, w, t); } // top
-        else if (number <= 20) { g.fillRect(0, 0, t, h); } // right
-        else if (number <= 30) { g.fillRect(0, 0, w, t); } // bottom
-        else { g.fillRect(w - t, 0, t, h); } // left
+        if (number <= 10) {
+            g.fillRect(0, h - t, w, t);
+        } // top
+        else if (number <= 20) {
+            g.fillRect(0, 0, t, h);
+        } // right
+        else if (number <= 30) {
+            g.fillRect(0, 0, w, t);
+        } // bottom
+        else {
+            g.fillRect(w - t, 0, t, h);
+        } // left
     }
 
     // Pomocnicza klasa UI do pionowego tekstu

@@ -4,7 +4,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 public class GuiMain extends JFrame {
@@ -59,12 +60,7 @@ public class GuiMain extends JFrame {
 
                 boardPanel.setBounds(padding, padding, boardSize, boardSize);
 
-                rightPanel.setBounds(
-                        padding * 2 + boardSize,
-                        padding,
-                        rightPanelWidth,
-                        boardSize
-                );
+                rightPanel.setBounds(padding * 2 + boardSize, padding, rightPanelWidth, boardSize);
             }
         });
 
@@ -132,15 +128,8 @@ public class GuiMain extends JFrame {
         buttonRollDice.addActionListener(e -> {
             Player currentPlayer = players.get(nowPlaying);
 
-            if (currentPlayer.shouldSkipNextTurn()) {
-                currentPlayer.setSkipNextTurn(false);
-                nowPlaying = (nowPlaying + 1) % players.size();
-                resetButtons();
-                updateGameUI();
-                infoConsole.setText("Gracz " + currentPlayer.getPlayerNumber() +
-                        " pomija turę! Teraz gracz: " + (nowPlaying + 1));
-                return;
-            }
+            //sprawdzenie czy gracz powinien skipnąc kolejke
+            if (shouldPlayerSkipTurn(currentPlayer)) return;
 
             dice1.rollDice();
             dice2.rollDice();
@@ -287,6 +276,19 @@ public class GuiMain extends JFrame {
             GuiMain mainFrame = new GuiMain();
             mainFrame.setVisible(true);
         });
+    }
+
+    //metoda sprawdzajaca czy gracz jest na miasteczku i czy  powinien pominąć ture.
+    private boolean shouldPlayerSkipTurn(Player currentPlayer) {
+        if (currentPlayer.shouldSkipNextTurn()) {
+            currentPlayer.setSkipNextTurn(false);
+            nowPlaying = (nowPlaying + 1) % players.size();
+            resetButtons();
+            updateGameUI();
+            infoConsole.setText("Gracz " + currentPlayer.getPlayerNumber() + " pomija turę! Teraz gracz: " + (nowPlaying + 1));
+            return true;
+        }
+        return false;
     }
 
     private void resetButtons() {
