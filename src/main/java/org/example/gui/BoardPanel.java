@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class BoardPanel extends JLayeredPane {
-    private final GuiMain guiMain;
     private final Board gameBoard;
     private final Dice dice1;
     private final Dice dice2;
@@ -22,7 +21,6 @@ public class BoardPanel extends JLayeredPane {
     private final List<RelativeComponent> relativeComponents = new ArrayList<>();
 
     public BoardPanel(GuiMain guiMain) {
-        this.guiMain = guiMain;
         setBorder(new LineBorder(Color.BLACK));
         setLayout(null); // absolutne pozycjonowanie
 
