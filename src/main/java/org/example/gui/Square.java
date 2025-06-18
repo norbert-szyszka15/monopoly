@@ -2,17 +2,17 @@ package org.example.gui;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 
 public class Square extends JPanel {
     private static int totalSquares = 0;
     private final int number;
+
     private final String name;
     private final JLabel nameLabel;
+
     private int price;
-    private int rentPrice;
-    private boolean isRentPaid = false;
 
     public Square(String labelString) {
         number = totalSquares++;
@@ -21,7 +21,7 @@ public class Square extends JPanel {
         setLayout(null);
         setOpaque(false); // by plansza pod spodem była widoczna
 
-// Ustawienie etykiety
+        // Ustawienie etykiety
         nameLabel = new JLabel(getDisplayLabel());
         nameLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 9));
         nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -33,36 +33,21 @@ public class Square extends JPanel {
     }
 
     public String getDisplayLabel() {
-        String base = name.replace("\n", "<br>");
         if (price > 0) {
             return "<html><div style='text-align:center'>" + name.replace("\n", "<br>") + "<br><b>" + price + " zł</b></div></html>";
         }
         return "<html><div style='text-align:center'>" + name.replace("\n", "<br>") + "</div></html>";
     }
 
-    public boolean isRentPaid() {
-        return isRentPaid;
-    }
-
-    public void setRentPaid(boolean rentPaid) {
-        isRentPaid = rentPaid;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public int getRentPrice() {
-        return rentPrice;
-    }
-
-    public void setRentPrice(int rentPrice) {
-        this.rentPrice = rentPrice;
     }
 
     public int getPrice() {
         return price;
     }
+
+    public void setRentPrice() { }
 
     public void setPrice(int price) {
         this.price = price;
@@ -122,27 +107,5 @@ public class Square extends JPanel {
         else {
             g.fillRect(w - t, 0, t, h);
         } // left
-    }
-
-    // Pomocnicza klasa UI do pionowego tekstu
-    static class VerticalLabelUI extends javax.swing.plaf.basic.BasicLabelUI {
-        final int degrees;
-
-        public VerticalLabelUI(int degrees) {
-            this.degrees = degrees;
-        }
-
-        @Override
-        public void paint(Graphics g, JComponent c) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            JLabel label = (JLabel) c;
-            g2.setFont(label.getFont());
-            g2.setColor(label.getForeground());
-            AffineTransform at = new AffineTransform();
-            at.rotate(Math.toRadians(degrees), c.getWidth() / 2.0, c.getHeight() / 2.0);
-            g2.setTransform(at);
-            super.paint(g2, c);
-            g2.dispose();
-        }
     }
 }

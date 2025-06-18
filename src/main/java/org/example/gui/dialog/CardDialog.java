@@ -6,7 +6,11 @@ import java.awt.*;
 
 public class CardDialog extends JDialog {
     public CardDialog(Component parentComponent, String title, String message) {
-        super((Frame) SwingUtilities.getWindowAncestor(parentComponent), title, true);
+        super(
+                (Frame) SwingUtilities.getWindowAncestor(parentComponent),
+                title,
+                true
+        );
         initDialogComponents(message);
         pack();
         setResizable(false);
@@ -28,7 +32,7 @@ public class CardDialog extends JDialog {
         ok.setFocusPainted(false);
         ok.setBackground(new Color(70,130,180));
         ok.setForeground(Color.WHITE);
-        ok.addActionListener(e -> dispose());
+        ok.addActionListener(_ -> dispose());
 
         content.add(lbl, BorderLayout.CENTER);
         content.add(ok, BorderLayout.SOUTH);

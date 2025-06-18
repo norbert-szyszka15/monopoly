@@ -4,9 +4,11 @@ import org.example.logic.Board;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +27,7 @@ public class BoardPanel extends JLayeredPane {
         setLayout(null); // absolutne pozycjonowanie
 
         // 1. Board (plansza) — pełny obszar
-        gameBoard = new Board(0, 0, 1112, 1112);
+        gameBoard = new Board();
         gameBoard.setBackground(new Color(51, 255, 153));
         add(gameBoard, Integer.valueOf(0));
         gameBoard.setBounds(0, 0, 1112, 1112); // początkowo, ale będzie skalowane razem z panelem
@@ -63,21 +65,21 @@ public class BoardPanel extends JLayeredPane {
         // 4. Etykiety tekstowe
         createResponsiveLabel(
                 "MONOPOLY",
-                Color.WHITE, new Color(235, 28, 34),
+                new Color(235, 28, 34),
                 160f / 1124f, 200f / 1124f, 800f / 1124f, 140f / 1124f,
                 0.4f // wielkość fontu względem wysokości
         );
 
         createResponsiveLabel(
                 "SZANSA",
-                Color.WHITE, new Color(106, 208, 249),
+                new Color(106, 208, 249),
                 200f / 1124f, 550f / 1124f, 300f / 1124f, 180f / 1124f,
                 0.3f
         );
 
         createResponsiveLabel(
                 "KASA",
-                Color.WHITE, new Color(240, 113, 30),
+                new Color(240, 113, 30),
                 610f / 1124f, 550f / 1124f, 300f / 1124f, 180f / 1124f,
                 0.3f
         );
@@ -105,9 +107,9 @@ public class BoardPanel extends JLayeredPane {
         }
     }
 
-    private JLabel createResponsiveLabel(String text, Color fg, Color bg, float x, float y, float w, float h, float fontScale) {
+    private void createResponsiveLabel(String text, Color bg, float x, float y, float w, float h, float fontScale) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
-        label.setForeground(fg);
+        label.setForeground(Color.WHITE);
         label.setBackground(bg);
         label.setOpaque(true);
         label.setFont(new Font("SansSerif", Font.BOLD, 12));
@@ -122,7 +124,6 @@ public class BoardPanel extends JLayeredPane {
             }
         });
 
-        return label;
     }
 
     private void drawHouses(Graphics g) {
@@ -145,7 +146,6 @@ public class BoardPanel extends JLayeredPane {
                 boolean bottom = r.y > gameBoard.getHeight()/2;
                 boolean top    = r.y < gameBoard.getHeight()/2 && !bottom;
                 boolean left   = !bottom && !top && r.x < gameBoard.getWidth()/2;
-                boolean right  = !bottom && !top && r.x > gameBoard.getWidth()/2;
 
                 g2.setColor(Color.GREEN);
                 for (int i = 0; i < count; i++) {

@@ -54,7 +54,6 @@ public enum SquareInfo {
     PODATEK2("PODATEK 2", SquareType.UNBUYABLE, 0, 0, "FUNC"),
     STARE_MIASTO("Stare\nMiasto", SquareType.PROPERTY, 500, 50, "DARKBLUE");
 
-    private static final HashMap<String, List<SquareInfo>> map = new HashMap<>();
     private final String displayName;
     private final SquareType type;
     private final int price;
@@ -67,7 +66,7 @@ public enum SquareInfo {
         for (SquareInfo sq : values()) {
             // pomijamy czynności i stacje
             if (sq.type == SquareType.PROPERTY && !"COMPANY".equals(sq.propertyGroup) && !"STATION".equals(sq.propertyGroup)) {
-                GROUPS.computeIfAbsent(sq.propertyGroup, k -> new ArrayList<>()).add(sq);
+                GROUPS.computeIfAbsent(sq.propertyGroup, _ -> new ArrayList<>()).add(sq);
             }
         }
     }

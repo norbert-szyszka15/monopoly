@@ -6,24 +6,25 @@ import org.example.logic.SquareInfo;
 import org.example.logic.strategySpecialField.SquareAction;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.ArrayList;import java.util.HashMap;
 
 public class Player extends JPanel {
-    private GuiMain guiMain;
-    static int totalPlayers; // może się przydać później, do rozpatrzenia
-    static HashMap<Integer, Integer> landAndMortgageRegister = new HashMap<>();
-    private HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
-    private HashMap<Integer,Integer> housesOnProperty = new HashMap<>();
+    private final GuiMain guiMain;
     JLabel labelPlayerNumber;
-    private int playerNumber;
-    private boolean skipNextTurn = false; // flaga czy gracz skipuje kolejke
-    private int currentPlayerPosition = 0; // lokalizacja gracza na planszy
-    private ArrayList<Integer> ownedProperties = new ArrayList<>(); // posiadane akty własności
-    private int wallet = 3200; // początkowa ilość gotówki gracza
-    public boolean houseBuiltThisTurn = false;
 
+    static int totalPlayers; // może się przydać później, do rozpatrzenia
+    private final int playerNumber;
+    private int currentPlayerPosition = 0; // lokalizacja gracza na planszy
+    private int wallet = 3200; // początkowa ilość gotówki gracza
+
+    static HashMap<Integer, Integer> landAndMortgageRegister = new HashMap<>();
+    private final HashMap<String, Integer> ownedPropertiesGroupCount = new HashMap<>();
+    private final HashMap<Integer,Integer> housesOnProperty = new HashMap<>();
+    private final ArrayList<Integer> ownedProperties = new ArrayList<>(); // posiadane akty własności
+
+    private boolean skipNextTurn = false; // flaga czy gracz skipuje kolejke
+    public boolean houseBuiltThisTurn = false;
 
     public Player(int playerNumber, Color color,GuiMain guiMain) {
         this.guiMain = guiMain;
@@ -45,8 +46,26 @@ public class Player extends JPanel {
         return wallet;
     }
 
+    public int getCurrentPlayerPosition() {
+        return currentPlayerPosition;
+    }
+
+    public int getPlayerNumber() {
+        return playerNumber;
+    }
+
     public void setSkipNextTurn(boolean skip) {
         this.skipNextTurn = skip;
+    }
+
+    public void setPosition(int position) {
+        this.currentPlayerPosition = position;
+
+        // Aktualizacja pozycji graficznej
+        Square targetSquare = Board.getInstance().getSquareAtPosition(position);
+        int x = targetSquare.getX() + (playerNumber == 1 ? 15 : 45);
+        int y = targetSquare.getY() + 15;
+        this.setLocation(x, y);
     }
 
     public boolean shouldSkipNextTurn() {
@@ -68,27 +87,21 @@ public class Player extends JPanel {
         System.out.println("Gracz " + playerNumber + " zarobił trochę pieniędzy!");
     }
 
-    public int getCurrentPlayerPosition() {
-        return currentPlayerPosition;
-    }
-
-    public int getPlayerNumber() {
-        return playerNumber;
-    }
-
-    public boolean hasOwnedProperties() {
-        return ownedProperties.contains(playerNumber);
-    }
-
     public boolean canBuildHouse(int position) {
+        SquareInfo info = SquareInfo.getBoardOrder()[position];
+        String group = info.getPropertyGroup();
+
+        if ("COMPANY".equals(group) || "STATION".equals(group)) {
+            return false;
+        }
+
         if (houseBuiltThisTurn) {
             return false;
         }
         // gracz musi być właścicielem
-        if (!ownedProperties.contains(position)) return false;
-
-        SquareInfo info = SquareInfo.getBoardOrder()[position];
-        String group = info.getPropertyGroup();
+        if (!ownedProperties.contains(position)) {
+            return false;
+        }
 
         // musi mieć pełny monopol na grupę
         int ownedInGroup = ownedPropertiesGroupCount.getOrDefault(group, 0);
@@ -129,14 +142,29 @@ public class Player extends JPanel {
         }
     }
 
-    public int calculateRent(int position) {
+    public int calculateRent(int position, int rollDiceSum) {
         SquareInfo info = SquareInfo.getBoardOrder()[position];
-        int baseRent = info.getRent();
-        int houses = housesOnProperty.getOrDefault(position, 0);
+        String group = info.getPropertyGroup();
 
-        // jeżeli brak domków, ale monopol – można np. podwoić czynsz
+        // CZYNSZ DLA PÓL STATION: 50 x liczba posiadanych pól STAION
+        if ("STATION".equals(group)) {
+            int ownedStations = ownedPropertiesGroupCount.getOrDefault("STATION", 0);
+            return 50 * ownedStations;
+        }
+
+        // CZYNSZ DLA PÓL COMPANY: 5x lub 10x liczba wyrzuconych oczek
+        if ("COMPANY".equals(group)) {
+            int ownedCompanies =  ownedPropertiesGroupCount.getOrDefault(group, 0);
+            int rentMultiplier = (ownedCompanies == 2) ? 10 : 5;
+            return rollDiceSum * rentMultiplier;
+        }
+
+        // CZYNSZ DLA ZWYKŁYCH POSIADŁOŚCI: czynsz standardowy związany z liczbą domków
+        int houses = housesOnProperty.getOrDefault(position, 0);
+        int baseRent = info.getRent();
+
+        // jeżeli brak domków, ale monopol – czynsz podwojony
         if (houses == 0) {
-            String group = info.getPropertyGroup();
             int ownedInGroup = ownedPropertiesGroupCount.getOrDefault(group, 0);
             if (ownedInGroup == SquareInfo.getPropertiesByGroup(group).size()) {
                 return baseRent * 2;  // klasyczne Monopoly: czynsz x2 za monopol bez domków
@@ -152,21 +180,17 @@ public class Player extends JPanel {
         return new HashMap<>(housesOnProperty);
     }
 
-    public void payRentTo(Player owner) {
+    public void payRentTo(Player owner, int rollDiceSum) {
         // Pobieramy aktualna pozycje do pózniejszej weryfikacji rent
         int position = this.currentPlayerPosition;
 
         // Pobieramy kwote czynszu
-        int rentAmount = owner.calculateRent(position);
+        int rentAmount = owner.calculateRent(position,  rollDiceSum);
         System.out.println(rentAmount);
 
         // Wykonujemy transakcje
         this.withdrawMoneyFromWallet(rentAmount);
         owner.depositMoneyToWallet(rentAmount);
-    }
-
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
     }
 
     public String drawCard() {
@@ -195,13 +219,7 @@ public class Player extends JPanel {
         }
     }
 
-    public void setPosition(int position) {
-        this.currentPlayerPosition = position;
-
-        // Aktualizacja pozycji graficznej
-        Square targetSquare = Board.getInstance().getSquareAtPosition(position);
-        int x = targetSquare.getX() + (playerNumber == 1 ? 15 : 45);
-        int y = targetSquare.getY() + 15;
-        this.setLocation(x, y);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
     }
 }

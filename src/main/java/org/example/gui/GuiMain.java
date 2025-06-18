@@ -1,29 +1,35 @@
 package org.example.gui;
 
+import org.example.gui.dialog.EndGameDialog;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+
 import java.util.ArrayList;
 
 public class GuiMain extends JFrame {
     static JTextArea infoConsole;
-    static int nowPlaying = 0;
+    static int nowPlaying = 0, lastRollDiceSum = 0;
 
     private final ArrayList<Player> players = new ArrayList<>();
     private final CardLayout c1 = new CardLayout();
 
-    private JPanel playerAssetsPanel;
-    private JButton buttonNextTurn, buttonRollDice, buttonPayRent, buttonBuy, buttonBuildHouse;
-    private JTextArea panelPlayer1TextArea, panelPlayer2TextArea;
+    private JButton buttonNextTurn;
+    private final JButton buttonRollDice, buttonPayRent, buttonBuy, buttonBuildHouse;
 
-    private Player player1, player2;
+    private final JPanel playerAssetsPanel;
+    private final JTextArea panelPlayer1TextArea, panelPlayer2TextArea;
+
+    private final Player player1, player2;
     private boolean doubleDiceforPlayer1 = false;
     private boolean doubleDiceforPlayer2 = false;
 
-    private BoardPanel boardPanel;
+    private final BoardPanel boardPanel;
 
     public GuiMain() {
         setTitle("Monopoly");
@@ -77,7 +83,7 @@ public class GuiMain extends JFrame {
         buttonBuy = new JButton("BUY");
         buttonBuy.setBounds(81, 818, 117, 29);
         buttonBuy.setEnabled(false);
-        buttonBuy.addActionListener(e -> {
+        buttonBuy.addActionListener(_ -> {
             Player currentPlayer = players.get(nowPlaying);
             var square = boardPanel.getGameBoard().getAllSquares().get(currentPlayer.getCurrentPlayerPosition());
             infoConsole.setText("Zakupiłeś " + square.getName());
@@ -92,7 +98,7 @@ public class GuiMain extends JFrame {
         buttonBuildHouse = new JButton("BUILD HOUSE");
         buttonBuildHouse.setBounds(81, 854, 246, 29);
         buttonBuildHouse.setEnabled(false);
-        buttonBuildHouse.addActionListener(e -> {
+        buttonBuildHouse.addActionListener(_ -> {
             Player currentPlayer = players.get(nowPlaying);
             int pos = currentPlayer.getCurrentPlayerPosition();
             currentPlayer.buildHouse(pos);
@@ -108,12 +114,12 @@ public class GuiMain extends JFrame {
         buttonPayRent = new JButton("PAY RENT");
         buttonPayRent.setBounds(210, 818, 117, 29);
         buttonPayRent.setEnabled(false);
-        buttonPayRent.addActionListener(e -> {
+        buttonPayRent.addActionListener(_ -> {
             Player currentPlayer = players.get(nowPlaying);
             int pos = currentPlayer.getCurrentPlayerPosition();
             int owner = Player.landAndMortgageRegister.get(pos);
             Player squareOwner = players.get(owner == 1 ? 0 : 1);
-            currentPlayer.payRentTo(squareOwner);
+            currentPlayer.payRentTo(squareOwner, lastRollDiceSum);
             infoConsole.setText("Zapłaciłeś czynsz graczowi " + squareOwner.getPlayerNumber());
             buttonNextTurn.setEnabled(true);
             buttonPayRent.setEnabled(false);
@@ -124,7 +130,7 @@ public class GuiMain extends JFrame {
 
         buttonRollDice = new JButton("ROLL DICE");
         buttonRollDice.setBounds(81, 728, 246, 53);
-        buttonRollDice.addActionListener(e -> {
+        buttonRollDice.addActionListener(_ -> {
             Player currentPlayer = players.get(nowPlaying);
 
             //sprawdzenie czy gracz powinien skipnąc kolejke
@@ -133,6 +139,7 @@ public class GuiMain extends JFrame {
             dice1.rollDice();
             dice2.rollDice();
             int total = dice1.getFaceValue() + dice2.getFaceValue();
+            lastRollDiceSum = total;
             boolean isDouble = dice1.getFaceValue() == dice2.getFaceValue();
 
             currentPlayer.move(total);
@@ -164,11 +171,7 @@ public class GuiMain extends JFrame {
             }
 
             // sprawdź, czy możemy budować domek na obecnej pozycji
-            if (currentPlayer.canBuildHouse(pos)) {
-                buttonBuildHouse.setEnabled(true);
-            } else {
-                buttonBuildHouse.setEnabled(false);
-            }
+            buttonBuildHouse.setEnabled(currentPlayer.canBuildHouse(pos));
 
             buttonRollDice.setEnabled(false);
 
@@ -186,7 +189,7 @@ public class GuiMain extends JFrame {
         buttonNextTurn = new JButton("NEXT TURN");
         buttonNextTurn.setBounds(81, 919, 246, 53);
         buttonNextTurn.setEnabled(false);
-        buttonNextTurn.addActionListener(e -> {
+        buttonNextTurn.addActionListener(_ -> {
             buttonRollDice.setEnabled(true);
             buttonNextTurn.setEnabled(false);
             buttonPayRent.setEnabled(false);
@@ -242,7 +245,7 @@ public class GuiMain extends JFrame {
         JLabel panelPlayer2Title = new JLabel("Player 2 All Wealth");
         panelPlayer2Title.setForeground(Color.WHITE);
         panelPlayer2Title.setHorizontalAlignment(SwingConstants.CENTER);
-        panelPlayer2Title.setBounds(0, 5, 540, 16);
+        panelPlayer2Title.setBounds(0, 5, 240, 16);
         panelPlayer2.add(panelPlayer2Title);
 
         panelPlayer2TextArea = new JTextArea();
@@ -274,13 +277,6 @@ public class GuiMain extends JFrame {
         });
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            GuiMain mainFrame = new GuiMain();
-            mainFrame.setVisible(true);
-        });
-    }
-
     //metoda sprawdzajaca czy gracz jest na miasteczku i czy  powinien pominąć ture.
     private boolean shouldPlayerSkipTurn(Player currentPlayer) {
         if (currentPlayer.shouldSkipNextTurn()) {
@@ -293,7 +289,6 @@ public class GuiMain extends JFrame {
         }
         return false;
     }
-
     private void resetButtons() {
         buttonRollDice.setEnabled(true);
         buttonNextTurn.setEnabled(false);
@@ -312,19 +307,19 @@ public class GuiMain extends JFrame {
     }
 
     private void updatePanelPlayer1TextArea() {
-        String result = "Środki w portfelu: " + player1.getWallet() + "\nAkty własności:\n";
+        StringBuilder result = new StringBuilder("Środki w portfelu: " + player1.getWallet() + "\nAkty własności:\n");
         for (int id : player1.getOwnedProperties()) {
-            result += " - " + boardPanel.getGameBoard().getAllSquares().get(id).getName() + "\n";
+            result.append(" - ").append(boardPanel.getGameBoard().getAllSquares().get(id).getName()).append("\n");
         }
-        panelPlayer1TextArea.setText(result);
+        panelPlayer1TextArea.setText(result.toString());
     }
 
     private void updatePanelPlayer2TextArea() {
-        String result = "Środki w portfelu: " + player2.getWallet() + "\nAkty własności:\n";
+        StringBuilder result = new StringBuilder("Środki w portfelu: " + player2.getWallet() + "\nAkty własności:\n");
         for (int id : player2.getOwnedProperties()) {
-            result += " - " + boardPanel.getGameBoard().getAllSquares().get(id).getName() + "\n";
+            result.append(" - ").append(boardPanel.getGameBoard().getAllSquares().get(id).getName()).append("\n");
         }
-        panelPlayer2TextArea.setText(result);
+        panelPlayer2TextArea.setText(result.toString());
     }
 
     public void endGame(int winnerPlayerNumber) {
@@ -335,14 +330,18 @@ public class GuiMain extends JFrame {
         buttonPayRent.setEnabled(false);
 
         // Wyświetl okno dialogowe
-        JOptionPane.showMessageDialog(
-                this,
-                "Koniec gry! Wygrywa gracz " + winnerPlayerNumber,
-                "Koniec gry",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+        System.out.println("Gracz " + winnerPlayerNumber + " wygrywa grę, przeciwnik zbankrutował!");
+        EndGameDialog endGameDialog = new EndGameDialog(this, winnerPlayerNumber);
+        endGameDialog.setVisible(true);
 
         // Zamknij aplikację
         System.exit(0);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            GuiMain mainFrame = new GuiMain();
+            mainFrame.setVisible(true);
+        });
     }
 }
