@@ -9,6 +9,11 @@ public enum Card {
 
     CHANCE_WINDA_BABILON("Włożyłeś podpalone krzesło do windy płacisz 1000zl na pokrycie szkód",
             player -> player.withdrawMoneyFromWallet(1000)),
+    CHANCE_KON_W_AKADEMIKU("Wprowadziłeś konia na najwyższe pięto akademika, płacisz 800zl na pokrycie szkód",
+            player -> player.withdrawMoneyFromWallet(800)),
+    CHANCE_JUWENALIA_MALUCH("Zdewastowałeś samochód uczciwego obywatela na Juwenaliach," +
+            " płacisz 1100zl na pokrycie szkód",
+            player -> player.withdrawMoneyFromWallet(1100)),
 
     WIN_LOTTERY("Wygrana w loterii! +150 zł",
             player -> player.depositMoneyToWallet(150)),
